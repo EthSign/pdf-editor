@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-import { PDFEditor } from "./components/pdf-editor";
+import { PDFEditor } from "./components/PDFEditor";
 
 function App() {
   const [count, setCount] = useState(0);
