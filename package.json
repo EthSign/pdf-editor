@@ -61,6 +61,7 @@
     "yargs": "^17.7.2"
   },
   "scripts": {
+    "dev": "gulp server:watch",
     "postinstall": "cross-env PUPPETEER_PRODUCT=firefox node node_modules/puppeteer/install.mjs"
   },
   "repository": {
