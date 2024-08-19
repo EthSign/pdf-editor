@@ -97,6 +97,7 @@ class EventBus {
    * @param {Object} data
    */
   dispatch(eventName, data) {
+    console.debug(eventName, data);
     const eventListeners = this.#listeners[eventName];
     if (!eventListeners || eventListeners.length === 0) {
       return;

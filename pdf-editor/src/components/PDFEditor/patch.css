@@ -1,0 +1,54 @@
+:root {
+  --toolbar-height: 0;
+  --body-bg-color: #f1f3f5;
+  --sidebar-toolbar-bg-color: white;
+}
+
+.toolbar {
+  display: none;
+}
+
+#toolbarSidebar {
+  display: none;
+  inset-inline-start: unset !important;
+}
+
+#outerContainer.sidebarOpen #sidebarContainer {
+  inset-inline-start: unset !important;
+  right: 0;
+}
+
+#outerContainer.sidebarOpen #viewerContainer:not(.pdfPresentationMode) {
+  inset-inline-start: calc(var(--sidebar-width) * -1);
+}
+
+#sidebarContent {
+  background-color: white;
+}
+
+#sidebarContainer {
+  border-top: none;
+}
+
+#thumbnailView .thumbnail {
+  position: relative;
+}
+
+#thumbnailView .thumbnail::before {
+  display: block;
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  z-index: 10;
+  content: attr(data-page-number);
+  width: 20px;
+  height: 20px;
+
+  border-radius: 20px;
+  background-color: #faefe7;
+  line-height: 20px;
+  text-align: center;
+  color: #cf5c10;
+  font-size: 13px;
+  font-weight: 500;
+}
