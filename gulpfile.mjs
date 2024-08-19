@@ -2431,66 +2431,9 @@ gulp.task("externaltest", function (done) {
   done();
 });
 
-// copy from "server" task
 gulp.task(
   "server:watch",
-  gulp.parallel(
-    function watchLocale() {
-      gulp.watch(
-        "l10n/**/*.ftl",
-        { ignoreInitial: false },
-        gulp.series("locale")
-      );
-    },
-    function watchDevSandbox() {
-      gulp.watch(
-        [
-          "src/pdf.{sandbox,sandbox.external,scripting}.js",
-          "src/scripting_api/*.js",
-          "src/shared/scripting_utils.js",
-          "external/quickjs/*.js",
-        ],
-        { ignoreInitial: false },
-        gulp.series("dev-sandbox")
-      );
-    },
-    async function watchServer() {
-      async function createServer() {
-        console.log();
-        console.log("### Starting local server");
-
-        let port = 8888;
-        const i = process.argv.indexOf("--port");
-        if (i >= 0 && i + 1 < process.argv.length) {
-          const p = parseInt(process.argv[i + 1], 10);
-          if (!isNaN(p)) {
-            port = p;
-          } else {
-            console.error("Invalid port number: using default (8888)");
-          }
-        }
-
-        const { WebServer } = await import("./test/webserver.mjs");
-        const server = new WebServer({ port });
-
-        return new Promise(resolve => {
-          server.start(() => resolve(server));
-        });
-      }
-
-      let server = await createServer();
-
-      gulp.watch(["scc/*", "web/*"], async function restartServer(done) {
-        if (server) {
-          await new Promise(resolve => {
-            server.stop(resolve);
-          });
-        }
-
-        server = await createServer();
-
-        done();
-      });
-    }
+  gulp.series("generic", () =>
+    gulp.watch(["src/*", "web/*"], gulp.series("generic"))
   )
 );
