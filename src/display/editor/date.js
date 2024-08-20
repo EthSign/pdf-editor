@@ -30,6 +30,7 @@ import {
   KeyboardManager,
 } from "./tools.js";
 import { AnnotationEditor } from "./editor.js";
+import datepicker from "js-datepicker";
 import { FreeTextAnnotationElement } from "../annotation_layer.js";
 
 const EOL_PATTERN = /\r\n?|\n/g;
@@ -37,10 +38,10 @@ const EOL_PATTERN = /\r\n?|\n/g;
 /**
  * Basic text editor in order to create a FreeTex annotation.
  */
-class FreeTextEditor extends AnnotationEditor {
+class DateEditor extends AnnotationEditor {
   #color;
 
-  #content = "";
+  #content = "date";
 
   #editorDivId = `${this.id}-editor`;
 
@@ -59,7 +60,7 @@ class FreeTextEditor extends AnnotationEditor {
   static _defaultFontSize = 10;
 
   static get _keyboardManager() {
-    const proto = FreeTextEditor.prototype;
+    const proto = DateEditor.prototype;
 
     const arrowChecker = self => self.isEmpty();
 
@@ -126,17 +127,18 @@ class FreeTextEditor extends AnnotationEditor {
     );
   }
 
-  static _type = "freetext";
+  static _type = "date";
 
-  static _editorType = AnnotationEditorType.FREETEXT;
+  static _editorType = AnnotationEditorType.DATE;
 
   constructor(params) {
     super({ ...params, name: "freeTextEditor" });
     this.#color =
       params.color ||
-      FreeTextEditor._defaultColor ||
+      DateEditor._defaultColor ||
       AnnotationEditor._defaultLineColor;
-    this.#fontSize = params.fontSize || FreeTextEditor._defaultFontSize;
+    this.#fontSize = params.fontSize || DateEditor._defaultFontSize;
+    this.#content = params.content;
   }
 
   /** @inheritdoc */
@@ -165,10 +167,10 @@ class FreeTextEditor extends AnnotationEditor {
   static updateDefaultParams(type, value) {
     switch (type) {
       case AnnotationEditorParamsType.FREETEXT_SIZE:
-        FreeTextEditor._defaultFontSize = value;
+        DateEditor._defaultFontSize = value;
         break;
       case AnnotationEditorParamsType.FREETEXT_COLOR:
-        FreeTextEditor._defaultColor = value;
+        DateEditor._defaultColor = value;
         break;
     }
   }
@@ -188,13 +190,10 @@ class FreeTextEditor extends AnnotationEditor {
   /** @inheritdoc */
   static get defaultPropertiesToUpdate() {
     return [
-      [
-        AnnotationEditorParamsType.FREETEXT_SIZE,
-        FreeTextEditor._defaultFontSize,
-      ],
+      [AnnotationEditorParamsType.FREETEXT_SIZE, DateEditor._defaultFontSize],
       [
         AnnotationEditorParamsType.FREETEXT_COLOR,
-        FreeTextEditor._defaultColor || AnnotationEditor._defaultLineColor,
+        DateEditor._defaultColor || AnnotationEditor._defaultLineColor,
       ],
     ];
   }
@@ -264,8 +263,8 @@ class FreeTextEditor extends AnnotationEditor {
     // The start of the base line is where the user clicked.
     const scale = this.parentScale;
     return [
-      -FreeTextEditor._internalPadding * scale,
-      -(FreeTextEditor._internalPadding + this.#fontSize) * scale,
+      -DateEditor._internalPadding * scale,
+      -(DateEditor._internalPadding + this.#fontSize) * scale,
     ];
   }
 
@@ -368,6 +367,14 @@ class FreeTextEditor extends AnnotationEditor {
 
   /** @inheritdoc */
   onceAdded() {
+    const picker = datepicker(this.editorDiv, {
+      onSelect: (instance, date) => {
+        this.editorDiv.innerText = date.toLocaleDateString();
+
+        // Do stuff when a date is selected (or unselected) on the calendar.
+        // You have access to the datepicker instance for convenience.
+      },
+    });
     if (this.width) {
       // The editor was created in using ctrl+c.
       return;
@@ -404,7 +411,7 @@ class FreeTextEditor extends AnnotationEditor {
     const buffer = [];
     this.editorDiv.normalize();
     for (const child of this.editorDiv.childNodes) {
-      buffer.push(FreeTextEditor.#getNodeContent(child));
+      buffer.push(DateEditor.#getNodeContent(child));
     }
     return buffer.join("\n");
   }
@@ -513,7 +520,7 @@ class FreeTextEditor extends AnnotationEditor {
   }
 
   editorDivKeydown(event) {
-    FreeTextEditor._keyboardManager.exec(this, event);
+    DateEditor._keyboardManager.exec(this, event);
   }
 
   editorDivFocus(event) {
@@ -554,8 +561,10 @@ class FreeTextEditor extends AnnotationEditor {
 
     super.render();
     this.editorDiv = document.createElement("div");
-    this.editorDiv.className = "internal";
+    // eslint-disable-next-line no-unsanitized/property
+    this.editorDiv.innerHTML = this.#content || "";
 
+    this.editorDiv.className = "internal";
     this.editorDiv.setAttribute("id", this.#editorDivId);
     this.editorDiv.setAttribute("data-l10n-id", "pdfjs-free-text");
     this.enableEditing();
@@ -568,7 +577,6 @@ class FreeTextEditor extends AnnotationEditor {
     const { style } = this.editorDiv;
     style.fontSize = `calc(${this.#fontSize}px * var(--scale-factor))`;
     style.color = this.#color;
-
     this.div.append(this.editorDiv);
 
     this.overlayDiv = document.createElement("div");
@@ -627,7 +635,7 @@ class FreeTextEditor extends AnnotationEditor {
         const scale = this.parentScale;
         [tx, ty] = this.pageTranslationToScreen(
           tx,
-          -FreeTextEditor._internalPadding * scale
+          -DateEditor._internalPadding * scale
         );
         this.setAt(baseX * parentWidth, baseY * parentHeight, tx, ty);
       } else {
@@ -668,7 +676,7 @@ class FreeTextEditor extends AnnotationEditor {
     }
 
     event.preventDefault();
-    const paste = FreeTextEditor.#deserializeContent(
+    const paste = DateEditor.#deserializeContent(
       clipboardData.getData("text") || ""
     ).replaceAll(EOL_PATTERN, "\n");
     if (!paste) {
@@ -704,7 +712,7 @@ class FreeTextEditor extends AnnotationEditor {
             buffer = bufferAfter;
             continue;
           }
-          buffer.push(FreeTextEditor.#getNodeContent(child));
+          buffer.push(DateEditor.#getNodeContent(child));
         }
       }
       bufferBefore.push(
@@ -719,7 +727,7 @@ class FreeTextEditor extends AnnotationEditor {
         if (i++ === startOffset) {
           buffer = bufferAfter;
         }
-        buffer.push(FreeTextEditor.#getNodeContent(child));
+        buffer.push(DateEditor.#getNodeContent(child));
       }
     }
     this.#content = `${bufferBefore.join("\n")}${paste}${bufferAfter.join("\n")}`;
@@ -811,7 +819,7 @@ class FreeTextEditor extends AnnotationEditor {
     const editor = super.deserialize(data, parent, uiManager);
     editor.#fontSize = data.fontSize;
     editor.#color = Util.makeHexColor(...data.color);
-    editor.#content = FreeTextEditor.#deserializeContent(data.value);
+    editor.#content = DateEditor.#deserializeContent(data.value);
     editor.annotationElementId = data.id || null;
     editor.editorId = data.editorId || null;
     editor.#initialData = initialData;
@@ -833,7 +841,7 @@ class FreeTextEditor extends AnnotationEditor {
       };
     }
 
-    const padding = FreeTextEditor._internalPadding * this.parentScale;
+    const padding = DateEditor._internalPadding * this.parentScale;
     const rect = this.getRect(padding, padding);
     const color = AnnotationEditor._colorManager.convert(
       this.isAttachedToDOM
@@ -842,7 +850,7 @@ class FreeTextEditor extends AnnotationEditor {
     );
 
     const serialized = {
-      annotationType: AnnotationEditorType.FREETEXT,
+      annotationType: AnnotationEditorType.DATE,
       color,
       fontSize: this.#fontSize,
       value: this.#serializeContent(),
@@ -900,7 +908,7 @@ class FreeTextEditor extends AnnotationEditor {
       content.append(div);
     }
 
-    const padding = FreeTextEditor._internalPadding * this.parentScale;
+    const padding = DateEditor._internalPadding * this.parentScale;
     annotation.updateEdited({
       rect: this.getRect(padding, padding),
       popupContent: this.#content,
@@ -915,4 +923,4 @@ class FreeTextEditor extends AnnotationEditor {
   }
 }
 
-export { FreeTextEditor };
+export { DateEditor };

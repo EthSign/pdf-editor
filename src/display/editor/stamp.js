@@ -374,7 +374,7 @@ class StampEditor extends AnnotationEditor {
     super.render();
     this.div.hidden = true;
 
-    this.addAltTextButton();
+    // this.addAltTextButton();
 
     if (this.#bitmap) {
       this.#createCanvas();
@@ -385,12 +385,7 @@ class StampEditor extends AnnotationEditor {
     if (this.width) {
       // This editor was created in using copy (ctrl+c).
       const [parentWidth, parentHeight] = this.parentDimensions;
-      this.setAt(
-        baseX * parentWidth,
-        baseY * parentHeight,
-        this.width * parentWidth,
-        this.height * parentHeight
-      );
+      this.setAt(baseX * parentWidth, baseY * parentHeight, 0, 0);
     }
 
     return this.div;
@@ -735,6 +730,7 @@ class StampEditor extends AnnotationEditor {
       editor.#bitmapUrl = bitmapUrl;
     }
     editor.#isSvg = isSvg;
+    editor.eidtorId = data.eidtorId;
 
     const [parentWidth, parentHeight] = editor.pageDimensions;
     editor.width = (rect[2] - rect[0]) / parentWidth;
@@ -763,12 +759,15 @@ class StampEditor extends AnnotationEditor {
       structTreeParentId: this._structTreeParentId,
     };
 
-    if (isForCopying) {
+    if (isForCopying || (typeof context === "boolean" && context)) {
       // We don't know what's the final destination (this pdf or another one)
       // of this annotation and the clipboard doesn't support ImageBitmaps,
       // hence we serialize the bitmap to a data url.
       serialized.bitmapUrl = this.#serializeBitmap(/* toUrl = */ true);
       serialized.accessibilityData = this.serializeAltText(true);
+      if (context) {
+        serialized.eidtorId = this.id;
+      }
       return serialized;
     }
 

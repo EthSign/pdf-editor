@@ -621,6 +621,10 @@ class AnnotationEditorUIManager {
 
   #viewer = null;
 
+  #annotationTempData = null;
+
+  #isDraggable = false;
+
   static TRANSLATE_SMALL = 1; // page units.
 
   static TRANSLATE_BIG = 10; // page units.
@@ -848,6 +852,22 @@ class AnnotationEditorUIManager {
     return AbortSignal.any([this._signal, ac.signal]);
   }
 
+  get annotationTempData() {
+    return this.#annotationTempData;
+  }
+
+  set annotationTempData(data) {
+    this.#annotationTempData = data;
+  }
+
+  get isDraggable() {
+    return this.#isDraggable;
+  }
+
+  set isDraggable(value) {
+    this.#isDraggable = value;
+  }
+
   get mlManager() {
     return this.#mlManager;
   }
@@ -903,6 +923,10 @@ class AnnotationEditorUIManager {
         ? new Map(Array.from(this.highlightColors, e => e.reverse()))
         : null
     );
+  }
+
+  get allEditors() {
+    return this.#allEditors;
   }
 
   setMainHighlightColorPicker(colorPicker) {
@@ -1277,6 +1301,7 @@ class AnnotationEditorUIManager {
   }
 
   dragOver(event) {
+    event.preventDefault();
     for (const { type } of event.dataTransfer.items) {
       for (const editorType of this.#editorTypes) {
         if (editorType.isHandlingMimeForPasting(type)) {
@@ -1293,6 +1318,11 @@ class AnnotationEditorUIManager {
    * @param {DragEvent} event
    */
   drop(event) {
+    this.currentLayer.createAndAddNewEditor(
+      event,
+      false,
+      JSON.parse(event.dataTransfer.getData("data"))
+    );
     for (const item of event.dataTransfer.items) {
       for (const editorType of this.#editorTypes) {
         if (editorType.isHandlingMimeForPasting(item.type)) {
@@ -1369,6 +1399,41 @@ class AnnotationEditorUIManager {
       return;
     }
 
+    if (!Array.isArray(data)) {
+      return;
+    }
+
+    this.unselectAll();
+    const layer = this.currentLayer;
+
+    try {
+      const newEditors = [];
+      for (const editor of data) {
+        const deserializedEditor = layer.deserialize(editor);
+        if (!deserializedEditor) {
+          return;
+        }
+        newEditors.push(deserializedEditor);
+      }
+
+      const cmd = () => {
+        for (const editor of newEditors) {
+          this.#addEditorToLayer(editor);
+        }
+        this.#selectEditors(newEditors);
+      };
+      const undo = () => {
+        for (const editor of newEditors) {
+          editor.remove();
+        }
+      };
+      this.addCommands({ cmd, undo, mustExec: true });
+    } catch (ex) {
+      warn(`paste: "${ex.message}".`);
+    }
+  }
+
+  addAnnotations(data) {
     if (!Array.isArray(data)) {
       return;
     }
@@ -1891,6 +1956,7 @@ class AnnotationEditorUIManager {
    * @param {AnnotationEditor} editor
    */
   setSelected(editor) {
+    console.log("select", editor);
     for (const ed of this.#selectedEditors) {
       if (ed !== editor) {
         ed.unselect();
@@ -1923,6 +1989,8 @@ class AnnotationEditorUIManager {
    * @param {AnnotationEditor} editor
    */
   unselect(editor) {
+    console.log("unselect", editor);
+
     editor.unselect();
     this.#selectedEditors.delete(editor);
     this.#dispatchUpdateStates({

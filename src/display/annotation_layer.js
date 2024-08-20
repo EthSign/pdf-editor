@@ -112,6 +112,9 @@ class AnnotationElementFactory {
       case AnnotationType.FREETEXT:
         return new FreeTextAnnotationElement(parameters);
 
+      case AnnotationType.DATE:
+        return new DateAnnotationElement(parameters);
+
       case AnnotationType.LINE:
         return new LineAnnotationElement(parameters);
 
@@ -2532,6 +2535,39 @@ class FreeTextAnnotationElement extends AnnotationElement {
   }
 }
 
+class DateAnnotationElement extends AnnotationElement {
+  constructor(parameters) {
+    super(parameters, { isRenderable: true, ignoreBorder: true });
+    this.textContent = parameters.data.textContent;
+    this.textPosition = parameters.data.textPosition;
+    this.annotationEditorType = AnnotationEditorType.DATE;
+  }
+
+  render() {
+    this.container.classList.add("freeTextAnnotation");
+
+    if (this.textContent) {
+      const content = document.createElement("div");
+      content.classList.add("annotationTextContent");
+      content.setAttribute("role", "comment");
+      for (const line of this.textContent) {
+        const lineSpan = document.createElement("span");
+        lineSpan.textContent = line;
+        content.append(lineSpan);
+      }
+      this.container.append(content);
+    }
+
+    if (!this.data.popupRef && this.hasPopupData) {
+      this._createPopup();
+    }
+
+    this._editOnDoubleClick();
+
+    return this.container;
+  }
+}
+
 class LineAnnotationElement extends AnnotationElement {
   #line = null;
 
@@ -3249,6 +3285,7 @@ class AnnotationLayer {
 
 export {
   AnnotationLayer,
+  DateAnnotationElement,
   FreeTextAnnotationElement,
   InkAnnotationElement,
   StampAnnotationElement,

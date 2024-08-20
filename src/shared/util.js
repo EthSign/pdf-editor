@@ -78,6 +78,7 @@ const AnnotationEditorType = {
   HIGHLIGHT: 9,
   STAMP: 13,
   INK: 15,
+  DATE: 27,
 };
 
 const AnnotationEditorParamsType = {
@@ -154,6 +155,7 @@ const AnnotationType = {
   WATERMARK: 24,
   THREED: 25,
   REDACT: 26,
+  DATE: 27,
 };
 
 const AnnotationReplyType = {

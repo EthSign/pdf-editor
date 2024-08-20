@@ -1962,7 +1962,6 @@ const PDFViewerApplication = {
       onUpdateFindControlState.bind(this),
       { signal }
     );
-
     if (typeof PDFJSDev === "undefined" || PDFJSDev.test("GENERIC")) {
       eventBus._on("fileinputchange", onFileInputChange.bind(this), { signal });
       eventBus._on("openfile", onOpenFile.bind(this), { signal });

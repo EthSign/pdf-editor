@@ -158,6 +158,7 @@ class AnnotationEditor {
     this._willKeepAspectRatio = false;
     this._initialOptions.isCentered = parameters.isCentered;
     this._structTreeParentId = null;
+    this.isCanMove = parameters.isCanMove;
 
     const {
       rotation,
@@ -296,7 +297,7 @@ class AnnotationEditor {
   }
 
   get _isDraggable() {
-    return this.#isDraggable;
+    return this.#isDraggable && this._uiManager.isDraggable;
   }
 
   set _isDraggable(value) {

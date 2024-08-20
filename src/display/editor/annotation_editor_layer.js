@@ -25,6 +25,7 @@
 
 import { AnnotationEditorType, FeatureTest } from "../../shared/util.js";
 import { AnnotationEditor } from "./editor.js";
+import { DateEditor } from "./date.js";
 import { FreeTextEditor } from "./freetext.js";
 import { HighlightEditor } from "./highlight.js";
 import { InkEditor } from "./ink.js";
@@ -82,10 +83,9 @@ class AnnotationEditorLayer {
   static _initialized = false;
 
   static #editorTypes = new Map(
-    [FreeTextEditor, InkEditor, StampEditor, HighlightEditor].map(type => [
-      type._editorType,
-      type,
-    ])
+    [FreeTextEditor, InkEditor, StampEditor, HighlightEditor, DateEditor].map(
+      type => [type._editorType, type]
+    )
   );
 
   /**
@@ -671,6 +671,9 @@ class AnnotationEditorLayer {
    */
   createAndAddNewEditor(event, isCentered, data = {}) {
     const id = this.getNextId();
+    if (data.mode) {
+      this.#uiManager.updateMode(data.mode);
+    }
     const editor = this.#createNewEditor({
       parent: this,
       id,
@@ -771,12 +774,18 @@ class AnnotationEditorLayer {
       return;
     }
 
-    if (this.#uiManager.getMode() === AnnotationEditorType.STAMP) {
+    /* if (this.#uiManager.getMode() === AnnotationEditorType.STAMP) {
       this.#uiManager.unselectAll();
       return;
+    } */
+    if (this.#uiManager.annotationTempData) {
+      this.createAndAddNewEditor(
+        event,
+        /* isCentered = */ false,
+        this.#uiManager.annotationTempData
+      );
+      this.#uiManager.annotationTempData = null;
     }
-
-    this.createAndAddNewEditor(event, /* isCentered = */ false);
   }
 
   /**
