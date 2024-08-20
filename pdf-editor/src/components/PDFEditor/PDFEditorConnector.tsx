@@ -1,16 +1,41 @@
+import { PDFDocument } from "pdf-lib";
+import { useRef } from "react";
 import { createRoot } from "react-dom/client";
+import cssPatch from "./patch.css?inline";
+import { PDFViewerApp } from "./types";
 import { getViewerInstance } from "./utils";
 import { WidgetRoot } from "./widgets/WidgetRoot";
-import cssPatch from "./patch.css?inline";
-import { useRef } from "react";
 
 export class PDFEditorConnector {
   viewerUrl: string;
 
   eventBus: any;
 
+  app: PDFViewerApp;
+
   constructor(params: { viewerUrl: string }) {
     this.viewerUrl = params.viewerUrl;
+  }
+
+  async addEmptyPage() {
+    if (!this.app.pdfDocument) return;
+
+    const currentPDFData = await this.app.pdfDocument.getData();
+    const blob = new Blob([currentPDFData], { type: "application/pdf" });
+
+    const newDoc = await PDFDocument.load(await blob.arrayBuffer());
+    newDoc.addPage();
+    const newDocBytes = await newDoc.save();
+
+    const newBlob = new Blob([newDocBytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(newBlob);
+    await this.open(url);
+
+    // TODO: jump to last page
+  }
+
+  open(url: string) {
+    return this.app.open({ url });
   }
 
   async connect(pdfViewerIframe: HTMLIFrameElement) {
@@ -18,6 +43,8 @@ export class PDFEditorConnector {
     if (!contentWindow) throw new Error();
 
     const { PDFViewerApplication } = getViewerInstance(pdfViewerIframe);
+    this.app = PDFViewerApplication;
+    this.eventBus = PDFViewerApplication.eventBus;
 
     /* ------------------------------- patch style ------------------------------ */
     const style = contentWindow.document.createElement("style");
