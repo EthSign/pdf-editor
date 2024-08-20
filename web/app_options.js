@@ -147,7 +147,7 @@ const defaultOptions = {
   },
   annotationEditorMode: {
     /** @type {number} */
-    value: 0,
+    value: 27,
     kind: OptionKind.VIEWER + OptionKind.PREFERENCE,
   },
   annotationMode: {

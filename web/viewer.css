@@ -366,6 +366,7 @@ body {
   background-color: var(--toolbar-bg-color);
   box-shadow: var(--toolbar-box-shadow);
   border-bottom: var(--toolbar-border-bottom);
+  display: none;
 }
 
 #toolbarViewer {

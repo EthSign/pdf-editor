@@ -292,7 +292,7 @@ class DateEditor extends AnnotationEditor {
     }
 
     this.parent.setEditingState(false);
-    this.parent.updateToolbar(AnnotationEditorType.FREETEXT);
+    this.parent.updateToolbar(AnnotationEditorType.DATE);
     super.enableEditMode();
     this.overlayDiv.classList.remove("enabled");
     this.editorDiv.contentEditable = true;
