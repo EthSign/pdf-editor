@@ -24,6 +24,10 @@ export const PDFEditor: React.FC<PDFEditor> = props => {
   const [editorReady, setEditorReady] = useState(false);
 
   const initPdfViewer = (app: PDFViewerApp) => {
+    // TODO: 禁用 cmd + s 等用不到的快捷键
+
+    // TODO: 禁用本地状态存储 history storage
+
     app.eventBus.on("documentloaded", () => {});
 
     appRef.current = app;
@@ -104,6 +108,8 @@ export const WidgetRoot: React.FC<{
 
   const [totalPage, setTotalPage] = useState(0);
 
+  const [title, setTitle] = useState("");
+
   const bus = viewerApp.eventBus;
 
   useEffect(() => {
@@ -114,6 +120,14 @@ export const WidgetRoot: React.FC<{
     const onPageChanging = (data: { pageNumber: number }) => {
       setCurrentPageInput(data.pageNumber);
     };
+
+    const onDocumentLoaded = () => {
+      const title = viewerApp._docFilename;
+
+      setTitle(title);
+    };
+
+    bus.on("documentloaded", onDocumentLoaded);
 
     bus.on("pagesloaded", onPagesLoaded);
     bus.on("pagechanging", onPageChanging);
@@ -126,6 +140,11 @@ export const WidgetRoot: React.FC<{
 
   return (
     <div>
+      {createPortal(
+        <div className="widget-title-wrapper">{title}</div>,
+        mainSlot
+      )}
+
       {createPortal(
         <div className="widget-page-indicator-wrapper">
           <div className="widget-page-indicator">

@@ -21,6 +21,7 @@
 }
 
 #outerContainer.sidebarOpen #viewerContainer:not(.pdfPresentationMode) {
+  inset-block-start: 50px;
   inset-inline-start: calc(var(--sidebar-width) * -1);
 }
 
@@ -30,6 +31,7 @@
 
 #sidebarContainer {
   border-top: none;
+  border-left: 1px solid #eaecf0;
 }
 
 #thumbnailView .thumbnail {
@@ -75,6 +77,29 @@
 /* -------------------------------------------------------------------------- */
 /*                                widgets style                               */
 /* -------------------------------------------------------------------------- */
+
+/* ----------------------------- document title ----------------------------- */
+
+.widget-title-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: var(--sidebar-width);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 50px;
+  border-bottom: 1px solid #eaecf0;
+
+  font-size: 20px;
+  color: #1d2939;
+  font-weight: 400;
+  background: white;
+}
+
+/* ----------------------------- page-indicator ----------------------------- */
 
 .widget-page-indicator-wrapper {
   position: absolute;
