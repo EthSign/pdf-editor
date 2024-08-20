@@ -2,6 +2,8 @@
   --toolbar-height: 0;
   --body-bg-color: #f1f3f5;
   --sidebar-toolbar-bg-color: white;
+
+  --thumbnail-selected-color: #3183c8;
 }
 
 .toolbar {
@@ -32,6 +34,16 @@
 
 #thumbnailView .thumbnail {
   position: relative;
+  margin: 0 10px 50px;
+  border: none;
+}
+
+#thumbnailView .thumbnail.selected {
+  outline: 2px solid var(--thumbnail-selected-color);
+}
+
+#thumbnailView .thumbnailImage {
+  box-shadow: 0 0 3px 0 #adb5bd;
 }
 
 #thumbnailView .thumbnail::before {
@@ -51,4 +63,81 @@
   color: #cf5c10;
   font-size: 13px;
   font-weight: 500;
+}
+
+#viewer .page .canvasWrapper {
+  box-shadow:
+    0 0 2px 0 rgba(0, 0, 0, 0.14),
+    0 2px 2px 0 rgba(0, 0, 0, 0.12),
+    0 1px 3px 0 rgba(0, 0, 0, 0.12);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                widgets style                               */
+/* -------------------------------------------------------------------------- */
+
+.widget-page-indicator-wrapper {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  z-index: 10;
+
+  height: 30px;
+  padding-right: var(--sidebar-width);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.widget-page-indicator {
+  display: flex;
+  align-items: center;
+  background: #485056;
+  color: white;
+  font-size: 13px;
+  padding: 8px 8px;
+  border-radius: 4px;
+  gap: 4px;
+
+  user-select: none;
+}
+
+.widget-page-indicator svg {
+  cursor: pointer;
+}
+
+.widget-page-indicator-pager {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+}
+
+.widget-page-indicator input {
+  width: 16px;
+  padding: 0;
+  border: none;
+  text-align: right;
+  font-family: Lato;
+  font-weight: 700;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+  border-radius: 0;
+}
+
+.widget-event-logger {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: block;
+  height: 300px;
+  width: 400px;
+  overflow: auto;
+
+  box-shadow: 0 0 3px 0 #adb5bd;
 }

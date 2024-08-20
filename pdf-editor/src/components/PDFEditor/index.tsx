@@ -1,8 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { getViewerInstance } from "./utils";
-import cssPatch from "./patch.css?inline";
 import clsx from "clsx";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { createRoot } from "react-dom/client";
+import { IconLeft, IconRight } from "./icons";
+import cssPatch from "./patch.css?inline";
+import { getViewerInstance } from "./utils";
 
 export interface PDFEditor {
   viewerUrl: string;
@@ -58,19 +60,32 @@ export const PDFEditor: React.FC<PDFEditor> = props => {
             const contentWindow = iframeEl.contentWindow;
             if (!contentWindow) throw new Error();
 
+            const { PDFViewerApplication } = getViewerInstance(iframeEl);
+
             /* ------------------------------- patch style ------------------------------ */
             const style = contentWindow.document.createElement("style");
             style.innerText = cssPatch;
             contentWindow.document.head.appendChild(style);
 
-            /* ---------------------------- mount widgetRoot ---------------------------- */
+            /* ---------------------------- mount WidgetRoot ---------------------------- */
             const rootEl = contentWindow.document.createElement("div");
+
+            const mainContainerEl = contentWindow.document.getElementById(
+              "mainContainer"
+            ) as HTMLDivElement;
+
             const widgetRoot = createRoot(rootEl!);
-            widgetRoot.render(<WidgetRoot />);
+
+            widgetRoot.render(
+              <WidgetRoot
+                viewerApp={PDFViewerApplication}
+                mainSlot={mainContainerEl}
+              />
+            );
+
             contentWindow.document.body.appendChild(rootEl!);
 
             /* -------------------------- create viewer bridge -------------------------- */
-            const { PDFViewerApplication } = getViewerInstance(iframeEl);
             initPdfViewer(PDFViewerApplication);
           }}
         />
@@ -79,10 +94,78 @@ export const PDFEditor: React.FC<PDFEditor> = props => {
   );
 };
 
-export const WidgetRoot: React.FC = () => {
-  useEffect(() => {
-    console.log("location is here", location.href);
-  });
+export const WidgetRoot: React.FC<{
+  viewerApp: any;
+  mainSlot: HTMLDivElement;
+}> = props => {
+  const { viewerApp, mainSlot } = props;
 
-  return <div className="size-full bg-red-50">Fuck</div>;
+  const [currentPageInput, setCurrentPageInput] = useState(0);
+
+  const [totalPage, setTotalPage] = useState(0);
+
+  const bus = viewerApp.eventBus;
+
+  useEffect(() => {
+    const onPagesLoaded = (data: { pagesCount: number }) => {
+      setTotalPage(data.pagesCount);
+    };
+
+    const onPageChanging = (data: { pageNumber: number }) => {
+      setCurrentPageInput(data.pageNumber);
+    };
+
+    bus.on("pagesloaded", onPagesLoaded);
+    bus.on("pagechanging", onPageChanging);
+
+    return () => {
+      bus.off("pagesloaded", onPagesLoaded);
+      bus.off("pagechanging", onPageChanging);
+    };
+  }, []);
+
+  return (
+    <div>
+      {createPortal(
+        <div className="widget-page-indicator-wrapper">
+          <div className="widget-page-indicator">
+            <IconLeft
+              onClick={() => {
+                viewerApp.pdfViewer.previousPage();
+              }}
+            />
+
+            <div className="widget-page-indicator-pager">
+              <input
+                type="text"
+                value={currentPageInput}
+                onChange={e => {
+                  const input = e.target.value;
+                  if (!/^\d*$/.test(input)) return;
+
+                  const page = Number(input);
+                  if (page < 1 || page > totalPage) return;
+
+                  setCurrentPageInput(page);
+                }}
+                onKeyDown={e => {
+                  if (e.key === "Enter") {
+                    viewerApp.pdfViewer.currentPageNumber = currentPageInput;
+                  }
+                }}
+              />
+              /<div className="">{totalPage}</div>
+            </div>
+
+            <IconRight
+              onClick={() => {
+                viewerApp.pdfViewer.nextPage();
+              }}
+            />
+          </div>
+        </div>,
+        mainSlot
+      )}
+    </div>
+  );
 };
