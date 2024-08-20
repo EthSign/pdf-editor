@@ -18,33 +18,26 @@
 
 :root {
   --outline-width: 2px;
-  --outline-color: #0060df;
+  --outline-color: #FDB022;
   --outline-around-width: 1px;
   --outline-around-color: #f0f0f4;
   --hover-outline-around-color: var(--outline-around-color);
   --focus-outline: solid var(--outline-width) var(--outline-color);
   --unfocus-outline: solid var(--outline-width) transparent;
-  --focus-outline-around: solid var(--outline-around-width)
-    var(--outline-around-color);
+  --focus-outline-around: solid var(--outline-around-width) var(--outline-around-color);
   --hover-outline-color: #8f8f9d;
   --hover-outline: solid var(--outline-width) var(--hover-outline-color);
-  --hover-outline-around: solid var(--outline-around-width)
-    var(--hover-outline-around-color);
+  --hover-outline-around: solid var(--outline-around-width) var(--hover-outline-around-color);
   --freetext-line-height: 1.35;
   --freetext-padding: 2px;
   --resizer-bg-color: var(--outline-color);
   --resizer-size: 6px;
-  --resizer-shift: calc(
-    0px - (var(--outline-width) + var(--resizer-size)) / 2 -
-      var(--outline-around-width)
-  );
+  --resizer-shift: calc(0px - (var(--outline-width) + var(--resizer-size)) / 2 - var(--outline-around-width));
   --editorFreeText-editing-cursor: text;
   --editorInk-editing-cursor: url(images/cursor-editorInk.svg) 0 16, pointer;
-  --editorHighlight-editing-cursor: url(images/cursor-editorTextHighlight.svg)
-      24 24,
+  --editorHighlight-editing-cursor: url(images/cursor-editorTextHighlight.svg) 24 24,
     text;
-  --editorFreeHighlight-editing-cursor: url(images/cursor-editorFreeHighlight.svg)
-      1 18,
+  --editorFreeHighlight-editing-cursor: url(images/cursor-editorFreeHighlight.svg) 1 18,
     pointer;
 
   --new-alt-text-warning-image: url(images/altText_warning.svg);
@@ -212,8 +205,7 @@
   }
 }
 
-.annotationEditorLayer
-  :is(.freeTextEditor, .inkEditor, .stampEditor, .highlightEditor),
+.annotationEditorLayer :is(.freeTextEditor, .inkEditor, .stampEditor, .highlightEditor),
 .textLayer {
   .editToolbar {
     --editor-toolbar-delete-image: url(images/editor-toolbar-delete.svg);
@@ -251,8 +243,7 @@
       --editor-toolbar-hover-border-color: AccentColor;
       --editor-toolbar-hover-bg-color: ButtonFace;
       --editor-toolbar-hover-fg-color: AccentColor;
-      --editor-toolbar-hover-outline: 2px solid
-        var(--editor-toolbar-hover-border-color);
+      --editor-toolbar-hover-outline: 2px solid var(--editor-toolbar-hover-border-color);
       --editor-toolbar-focus-outline-color: ButtonBorder;
       --editor-toolbar-shadow: none;
       --alt-text-done-color: var(--editor-toolbar-fg-color);
@@ -306,9 +297,7 @@
 
       .divider {
         width: 1px;
-        height: calc(
-          2 * var(--editor-toolbar-padding) + var(--editor-toolbar-height)
-        );
+        height: calc(2 * var(--editor-toolbar-padding) + var(--editor-toolbar-height));
         background-color: var(--editor-toolbar-border-color);
         display: inline-block;
         margin-inline: 2px;
@@ -352,7 +341,7 @@
         }
       }
 
-      > * {
+      >* {
         height: var(--editor-toolbar-height);
       }
 
@@ -610,7 +599,7 @@
 
 .annotationEditorLayer {
   :is(.freeTextEditor, .inkEditor, .stampEditor) {
-    & > .resizers {
+    &>.resizers {
       position: absolute;
       inset: 0;
 
@@ -618,7 +607,7 @@
         display: none;
       }
 
-      & > .resizer {
+      &>.resizer {
         width: var(--resizer-size);
         height: var(--resizer-size);
         background: content-box var(--resizer-bg-color);
@@ -669,15 +658,12 @@
     }
   }
 
-  &[data-main-rotation="0"]
-    :is([data-editor-rotation="0"], [data-editor-rotation="180"]),
-  &[data-main-rotation="90"]
-    :is([data-editor-rotation="270"], [data-editor-rotation="90"]),
-  &[data-main-rotation="180"]
-    :is([data-editor-rotation="180"], [data-editor-rotation="0"]),
-  &[data-main-rotation="270"]
-    :is([data-editor-rotation="90"], [data-editor-rotation="270"]) {
-    & > .resizers > .resizer {
+  &[data-main-rotation="0"] :is([data-editor-rotation="0"], [data-editor-rotation="180"]),
+  &[data-main-rotation="90"] :is([data-editor-rotation="270"], [data-editor-rotation="90"]),
+  &[data-main-rotation="180"] :is([data-editor-rotation="180"], [data-editor-rotation="0"]),
+  &[data-main-rotation="270"] :is([data-editor-rotation="90"], [data-editor-rotation="270"]) {
+    &>.resizers>.resizer {
+
       &.topLeft,
       &.bottomRight {
         cursor: nwse-resize;
@@ -700,15 +686,12 @@
     }
   }
 
-  &[data-main-rotation="0"]
-    :is([data-editor-rotation="90"], [data-editor-rotation="270"]),
-  &[data-main-rotation="90"]
-    :is([data-editor-rotation="0"], [data-editor-rotation="180"]),
-  &[data-main-rotation="180"]
-    :is([data-editor-rotation="270"], [data-editor-rotation="90"]),
-  &[data-main-rotation="270"]
-    :is([data-editor-rotation="180"], [data-editor-rotation="0"]) {
-    & > .resizers > .resizer {
+  &[data-main-rotation="0"] :is([data-editor-rotation="90"], [data-editor-rotation="270"]),
+  &[data-main-rotation="90"] :is([data-editor-rotation="0"], [data-editor-rotation="180"]),
+  &[data-main-rotation="180"] :is([data-editor-rotation="270"], [data-editor-rotation="90"]),
+  &[data-main-rotation="270"] :is([data-editor-rotation="180"], [data-editor-rotation="0"]) {
+    &>.resizers>.resizer {
+
       &.topLeft,
       &.bottomRight {
         cursor: nesw-resize;
@@ -731,13 +714,10 @@
     }
   }
 
-  &
-    :is(
-      [data-main-rotation="0"] [data-editor-rotation="90"],
-      [data-main-rotation="90"] [data-editor-rotation="0"],
-      [data-main-rotation="180"] [data-editor-rotation="270"],
-      [data-main-rotation="270"] [data-editor-rotation="180"]
-    ) {
+  & :is([data-main-rotation="0"] [data-editor-rotation="90"],
+    [data-main-rotation="90"] [data-editor-rotation="0"],
+    [data-main-rotation="180"] [data-editor-rotation="270"],
+    [data-main-rotation="270"] [data-editor-rotation="180"]) {
     .editToolbar {
       rotate: 270deg;
 
@@ -753,13 +733,10 @@
     }
   }
 
-  &
-    :is(
-      [data-main-rotation="0"] [data-editor-rotation="180"],
-      [data-main-rotation="90"] [data-editor-rotation="90"],
-      [data-main-rotation="180"] [data-editor-rotation="0"],
-      [data-main-rotation="270"] [data-editor-rotation="270"]
-    ) {
+  & :is([data-main-rotation="0"] [data-editor-rotation="180"],
+    [data-main-rotation="90"] [data-editor-rotation="90"],
+    [data-main-rotation="180"] [data-editor-rotation="0"],
+    [data-main-rotation="270"] [data-editor-rotation="270"]) {
     .editToolbar {
       rotate: 180deg;
       inset-inline-end: 100%;
@@ -767,13 +744,10 @@
     }
   }
 
-  &
-    :is(
-      [data-main-rotation="0"] [data-editor-rotation="270"],
-      [data-main-rotation="90"] [data-editor-rotation="180"],
-      [data-main-rotation="180"] [data-editor-rotation="90"],
-      [data-main-rotation="270"] [data-editor-rotation="0"]
-    ) {
+  & :is([data-main-rotation="0"] [data-editor-rotation="270"],
+    [data-main-rotation="90"] [data-editor-rotation="180"],
+    [data-main-rotation="180"] [data-editor-rotation="90"],
+    [data-main-rotation="270"] [data-editor-rotation="0"]) {
     .editToolbar {
       rotate: 90deg;
 
@@ -875,6 +849,7 @@
   padding: 0;
 
   &.noAi {
+
     #newAltTextDisclaimer,
     #newAltTextCreateAutomatically {
       display: none !important;
@@ -885,6 +860,7 @@
     #newAltTextCreateAutomatically {
       display: none !important;
     }
+
     #newAltTextDownloadModel {
       display: flex !important;
     }
@@ -1030,7 +1006,7 @@
         background-color: var(--preview-image-bg-color);
         border: var(--preview-image-border);
 
-        > canvas {
+        >canvas {
           max-width: 100%;
           max-height: 100%;
         }
@@ -1066,32 +1042,32 @@
     forced-color-adjust: none;
   }
 
-  button:is(:hover, .selected) > .swatch {
+  button:is(:hover, .selected)>.swatch {
     border: none;
   }
 }
 
 .annotationEditorLayer {
   &[data-main-rotation="0"] {
-    .highlightEditor:not(.free) > .editToolbar {
+    .highlightEditor:not(.free)>.editToolbar {
       rotate: 0deg;
     }
   }
 
   &[data-main-rotation="90"] {
-    .highlightEditor:not(.free) > .editToolbar {
+    .highlightEditor:not(.free)>.editToolbar {
       rotate: 270deg;
     }
   }
 
   &[data-main-rotation="180"] {
-    .highlightEditor:not(.free) > .editToolbar {
+    .highlightEditor:not(.free)>.editToolbar {
       rotate: 180deg;
     }
   }
 
   &[data-main-rotation="270"] {
-    .highlightEditor:not(.free) > .editToolbar {
+    .highlightEditor:not(.free)>.editToolbar {
       rotate: 90deg;
     }
   }
@@ -1198,15 +1174,15 @@
                 outline: none;
               }
 
-              > .swatch {
+              >.swatch {
                 outline-offset: 2px;
               }
 
-              &[aria-selected="true"] > .swatch {
+              &[aria-selected="true"]>.swatch {
                 outline: 2px solid var(--selected-outline-color);
               }
 
-              &:is(:hover, :active, :focus-visible) > .swatch {
+              &:is(:hover, :active, :focus-visible)>.swatch {
                 outline: 2px solid var(--hover-outline-color);
               }
             }
@@ -1267,11 +1243,11 @@
           outline: none;
         }
 
-        &[aria-selected="true"] > .swatch {
+        &[aria-selected="true"]>.swatch {
           outline: 2px solid var(--selected-outline-color);
         }
 
-        &:is(:hover, :active, :focus-visible) > .swatch {
+        &:is(:hover, :active, :focus-visible)>.swatch {
           outline: 2px solid var(--hover-outline-color);
         }
       }
@@ -1320,6 +1296,7 @@
         border-radius: 100%;
         background-color: var(--example-color);
       }
+
       &::after {
         width: 24px;
       }

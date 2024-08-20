@@ -1956,7 +1956,7 @@ class AnnotationEditorUIManager {
    * @param {AnnotationEditor} editor
    */
   setSelected(editor) {
-    console.log("select", editor);
+    this._eventBus.dispatch("annotationeditorselected", editor);
     for (const ed of this.#selectedEditors) {
       if (ed !== editor) {
         ed.unselect();

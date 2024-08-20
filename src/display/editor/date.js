@@ -367,12 +367,9 @@ class DateEditor extends AnnotationEditor {
 
   /** @inheritdoc */
   onceAdded() {
-    const picker = datepicker(this.editorDiv, {
+    datepicker(this.editorDiv, {
       onSelect: (instance, date) => {
         this.editorDiv.innerText = date.toLocaleDateString();
-
-        // Do stuff when a date is selected (or unselected) on the calendar.
-        // You have access to the datepicker instance for convenience.
       },
     });
     if (this.width) {

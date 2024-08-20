@@ -147,11 +147,11 @@ function safeSpawnSync(command, parameters, options = {}) {
   if (result.status !== 0) {
     console.log(
       'Error: command "' +
-      command +
-      '" with parameters "' +
-      parameters +
-      '" exited with code ' +
-      result.status
+        command +
+        '" with parameters "' +
+        parameters +
+        '" exited with code ' +
+        result.status
     );
     process.exit(result.status);
   }
@@ -341,24 +341,24 @@ function createWebpackConfig(
       minimizer: !isMinified
         ? undefined
         : [
-          new TerserPlugin({
-            extractComments: false,
-            parallel: false,
-            terserOptions: {
-              compress: {
-                // V8 chokes on very long sequences, work around that.
-                sequences: false,
+            new TerserPlugin({
+              extractComments: false,
+              parallel: false,
+              terserOptions: {
+                compress: {
+                  // V8 chokes on very long sequences, work around that.
+                  sequences: false,
+                },
+                mangle: {
+                  // Ensure that the `tweakWebpackOutput` function works.
+                  reserved: ["__webpack_exports__"],
+                },
+                keep_classnames: true,
+                keep_fnames: true,
+                module: isModule,
               },
-              mangle: {
-                // Ensure that the `tweakWebpackOutput` function works.
-                reserved: ["__webpack_exports__"],
-              },
-              keep_classnames: true,
-              keep_fnames: true,
-              module: isModule,
-            },
-          }),
-        ],
+            }),
+          ],
     },
     experiments,
     output,
@@ -423,7 +423,7 @@ function checkChromePreferencesFile(chromePrefsPath, webPrefs) {
       ret = false;
       console.log(
         `Warning: not the same values (for "${key}"): ` +
-        `${chromePrefs.properties[key].default} !== ${value}`
+          `${chromePrefs.properties[key].default} !== ${value}`
       );
     }
   }
@@ -435,8 +435,8 @@ function checkChromePreferencesFile(chromePrefsPath, webPrefs) {
       ret = false;
       console.log(
         `Warning: ${chromePrefsPath} contains an unrecognized pref: ${key}. ` +
-        `Remove it, or prepend "DEPRECATED. " and add migration logic to ` +
-        `extensions/chromium/options/migration.js and web/chromecom.js.`
+          `Remove it, or prepend "DEPRECATED. " and add migration logic to ` +
+          `extensions/chromium/options/migration.js and web/chromecom.js.`
       );
     }
   }
@@ -1512,11 +1512,11 @@ function buildLibHelper(bundleDefines, inputStream, outputDir) {
       presets: skipBabel
         ? undefined
         : [
-          [
-            "@babel/preset-env",
-            { ...BABEL_PRESET_ENV_OPTS, loose: false, modules: false },
+            [
+              "@babel/preset-env",
+              { ...BABEL_PRESET_ENV_OPTS, loose: false, modules: false },
+            ],
           ],
-        ],
       plugins: [[babelPluginPDFJSPreprocessor, ctx]],
       targets: BABEL_TARGETS,
     }).code;
@@ -2406,8 +2406,8 @@ gulp.task(
             .on("end", function () {
               console.log(
                 "Result diff can be found at " +
-                BUILD_DIR +
-                MOZCENTRAL_DIFF_FILE
+                  BUILD_DIR +
+                  MOZCENTRAL_DIFF_FILE
               );
               done();
             });
