@@ -3,7 +3,7 @@ import "./App.css";
 import { PDFEditor } from "./components/PDFEditor";
 import { usePDFEditorConnector } from "./components/PDFEditor/PDFEditorConnector";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 export interface PDFEditor {
   viewerUrl: string;
@@ -19,7 +19,7 @@ const AnnotationEditorType = {
   INK: 15,
 };
 
-export const App: React.FC<any> = props => {
+function App() {
   const connector = usePDFEditorConnector({ viewerUrl: "/web/viewer.html" });
 
   const [annots, setAnnots] = useState<any[]>([
@@ -58,125 +58,162 @@ export const App: React.FC<any> = props => {
     });
   }, [connector.eventBus]);
   return (
-    <div className="size-full flex h-[100vh]">
-      <div className="w-[300px] p-8">
-        <button
-          draggable
-          onDragStart={event => {
-            event.dataTransfer.setData(
-              "data",
-              JSON.stringify({
-                bitmapFile: img,
-                mode: AnnotationEditorType.FREETEXT,
-              })
-            );
-          }}
-          className="border px-4 py-2"
-          onClick={() => {
-            if (!connector) return;
-            connector.app.pdfViewer.annotationEditorUIManager.annotationTempData =
-              {
-                mode: AnnotationEditorType.FREETEXT,
-              };
-          }}
-        >
-          文字工具
-        </button>
-        <button
-          draggable
-          onDragStart={event => {
-            event.dataTransfer.setData(
-              "data",
-              JSON.stringify({
-                mode: AnnotationEditorType.DATE,
-              })
-            );
-          }}
-          className="border px-4 py-2"
-          onClick={() => {
-            if (!connector.app) return;
-            connector.app.pdfViewer.annotationEditorUIManager.annotationTempData =
-              {
-                mode: AnnotationEditorType.DATE,
-              };
-          }}
-        >
-          日期工具
-        </button>
-        <button
-          draggable
-          onDragStart={event => {
-            event.dataTransfer.setData(
-              "data",
-              JSON.stringify({
-                bitmapFile: img,
-                mode: AnnotationEditorType.STAMP,
-              })
-            );
-          }}
-          className="border px-4 py-2"
-          onClick={() => {
-            if (!connector.app) return;
-            connector.app.pdfViewer.annotationEditorUIManager.annotationTempData =
-              {
-                mode: AnnotationEditorType.STAMP,
-                bitmapFile: img,
-              };
-          }}
-        >
-          图片工具
-        </button>
-        <button
-          className="border px-4 py-2"
-          onClick={() => {
-            if (!connector.app) return;
+    <div>
+      <div className="w-screen h-screen flex">
+        <div className="w-[300px] border-r">
+          <h1 className="h-[50px] flex items-center px-4 border-b">功能测试</h1>
 
-            const data = [];
-            for (const editor of connector.app.pdfViewer.annotationEditorUIManager.allEditors.values()) {
-              data.push(editor.serialize(false, true));
-            }
-            setAnnots(data);
-            console.log(data);
-          }}
-        >
-          获取注释序列化
-        </button>
-        <button
-          className="border px-4 py-2 "
-          onClick={() => {
-            if (!connector.app) return;
-            connector.app.pdfViewer.annotationEditorUIManager.addAnnotations(
-              annots
-            );
-          }}
-        >
-          添加注释
-        </button>
-        <button
-          className="border px-4 py-2 "
-          onClick={() => {
-            connector.app.pdfViewer.annotationEditorUIManager.isDraggable =
-              true;
-          }}
-        >
-          开启拖动
-        </button>
-        <button
-          className="border px-4 py-2 "
-          onClick={() => {
-            connector.app.pdfViewer.annotationEditorUIManager.isDraggable =
-              false;
-          }}
-        >
-          关闭拖动
-        </button>
-      </div>
+          <div className="flex mt-4 flex-col [&>button]:text-left [&>button]:w-full [&>button]:h-full [&>button]:px-4 [&>button]:py-2 [&>button:hover]:bg-gray-300">
+            <button
+              onClick={async () => {
+                const pdfDoc = await PDFDocument.create();
+                const timesRomanFont = await pdfDoc.embedFont(
+                  StandardFonts.TimesRoman
+                );
 
-      <div className="flex-1">
+                const page = pdfDoc.addPage();
+                const { height } = page.getSize();
+                const fontSize = 30;
+                page.drawText("Creating PDFs in JavaScript is awesome!", {
+                  x: 50,
+                  y: height - 4 * fontSize,
+                  size: fontSize,
+                  font: timesRomanFont,
+                  color: rgb(0, 0.53, 0.71),
+                });
+
+                pdfDoc.addPage();
+
+                const pdfBytes = await pdfDoc.save();
+
+                const blob = new Blob([pdfBytes], { type: "application/pdf" });
+
+                const url = URL.createObjectURL(blob);
+
+                connector.open(url);
+              }}
+            >
+              原地创建 PDF
+            </button>
+
+            <button
+              onClick={() => {
+                connector.addEmptyPage();
+              }}
+            >
+              添加空白页
+            </button>
+
+            <button
+              draggable
+              onDragStart={event => {
+                event.dataTransfer.setData(
+                  "data",
+                  JSON.stringify({
+                    bitmapFile: img,
+                    mode: AnnotationEditorType.FREETEXT,
+                  })
+                );
+              }}
+              onClick={() => {
+                if (!connector) return;
+                connector.app.pdfViewer.annotationEditorUIManager.annotationTempData =
+                  {
+                    mode: AnnotationEditorType.FREETEXT,
+                  };
+              }}
+            >
+              文字工具
+            </button>
+            <button
+              draggable
+              onDragStart={event => {
+                event.dataTransfer.setData(
+                  "data",
+                  JSON.stringify({
+                    mode: AnnotationEditorType.DATE,
+                  })
+                );
+              }}
+              onClick={() => {
+                if (!connector.app) return;
+                connector.app.pdfViewer.annotationEditorUIManager.annotationTempData =
+                  {
+                    mode: AnnotationEditorType.DATE,
+                  };
+              }}
+            >
+              日期工具
+            </button>
+            <button
+              draggable
+              onDragStart={event => {
+                event.dataTransfer.setData(
+                  "data",
+                  JSON.stringify({
+                    bitmapFile: img,
+                    mode: AnnotationEditorType.STAMP,
+                  })
+                );
+              }}
+              onClick={() => {
+                if (!connector.app) return;
+                connector.app.pdfViewer.annotationEditorUIManager.annotationTempData =
+                  {
+                    mode: AnnotationEditorType.STAMP,
+                    bitmapFile: img,
+                  };
+              }}
+            >
+              图片工具
+            </button>
+            <button
+              onClick={() => {
+                if (!connector.app) return;
+
+                const data = [];
+                for (const editor of connector.app.pdfViewer.annotationEditorUIManager.allEditors.values()) {
+                  data.push(editor.serialize(false, true));
+                }
+                setAnnots(data);
+                console.log(data);
+              }}
+            >
+              获取注释序列化
+            </button>
+            <button
+              onClick={() => {
+                if (!connector.app) return;
+                connector.app.pdfViewer.annotationEditorUIManager.addAnnotations(
+                  annots
+                );
+              }}
+            >
+              添加注释
+            </button>
+            <button
+              onClick={() => {
+                connector.app.pdfViewer.annotationEditorUIManager.isDraggable =
+                  true;
+              }}
+            >
+              开启拖动
+            </button>
+            <button
+              onClick={() => {
+                connector.app.pdfViewer.annotationEditorUIManager.isDraggable =
+                  false;
+              }}
+            >
+              关闭拖动
+            </button>
+          </div>
+        </div>
+
         <PDFEditor connector={connector} />
       </div>
     </div>
   );
-};
+}
 
 export default App;
