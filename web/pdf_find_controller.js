@@ -549,6 +549,7 @@ class PDFFindController {
     this._scrollMatches = false;
     this._pdfDocument = null;
     this._pageMatches = [];
+    this._pageMatcherResult = [];
     this._pageMatchesLength = [];
     this.#visitedPagesCount = 0;
     this.#state = null;
@@ -749,11 +750,13 @@ class PDFFindController {
     const matcherResult = this.match(query, pageContent, pageIndex);
 
     const matches = (this._pageMatches[pageIndex] = []);
+    const pageMatcherResult = (this._pageMatcherResult[pageIndex] = []);
     const matchesLength = (this._pageMatchesLength[pageIndex] = []);
     const diffs = this._pageDiffs[pageIndex];
 
     matcherResult?.forEach(({ index, length }) => {
       const [matchPos, matchLen] = getOriginalIndex(diffs, index, length);
+      pageMatcherResult.push(index);
       if (matchLen) {
         matches.push(matchPos);
         matchesLength.push(matchLen);

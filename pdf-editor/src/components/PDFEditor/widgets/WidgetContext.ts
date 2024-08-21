@@ -1,10 +1,14 @@
 import { createContext, useContext } from "react";
+import { PDFEditorConnector } from "../PDFEditorConnector";
 
-const widgetContext = createContext({});
+export const WidgetContext = createContext<{
+  connector?: PDFEditorConnector;
+}>({});
 
 export const useWidgetContext = () => {
-  const context = useContext(widgetContext);
-  return context;
+  const { connector } = useContext(WidgetContext);
+
+  const { app } = connector!;
+
+  return { connector: connector!, viewerApp: app };
 };
-
-

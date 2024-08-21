@@ -1,23 +1,31 @@
 import React from "react";
 import { createPortal } from "react-dom";
+import { PDFEditorConnector } from "../PDFEditorConnector";
 import { PageIndicator } from "./PageIndicator";
+import { Search } from "./Search";
 import { TitleBar } from "./TitleBar";
+import { WidgetContext } from "./WidgetContext";
 
 export const WidgetRoot: React.FC<{
-  viewerApp: any;
+  connector: PDFEditorConnector;
   mainSlot: HTMLDivElement;
+  sidebarSlot: HTMLElement;
 }> = props => {
-  const { viewerApp, mainSlot } = props;
+  const { connector, mainSlot, sidebarSlot } = props;
 
   return (
-    <div>
-      {createPortal(
-        <>
-          <TitleBar viewerApp={viewerApp} />
-          <PageIndicator viewerApp={viewerApp} />
-        </>,
-        mainSlot
-      )}
-    </div>
+    <WidgetContext.Provider value={{ connector }}>
+      <div>
+        {createPortal(
+          <>
+            <TitleBar />
+            <PageIndicator />
+          </>,
+          mainSlot
+        )}
+
+        {createPortal(<Search />, sidebarSlot)}
+      </div>
+    </WidgetContext.Provider>
   );
 };
