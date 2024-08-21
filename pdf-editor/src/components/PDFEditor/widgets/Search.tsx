@@ -1,6 +1,7 @@
 import clsx from "clsx";
-import React, { useEffect, useMemo, useState } from "react";
-import { IconLeft, IconRight, IconSearch } from "../icons";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { IconClose, IconLeft, IconRight, IconSearch } from "../icons";
+import { debounce } from "../utils";
 import { useWidgetContext } from "./WidgetContext";
 
 interface HighlightProps {
@@ -98,15 +99,17 @@ export const Search: React.FC = () => {
     const onStateChange = ({ source, state, rawQuery }: any) => {
       setSearching(state === 3);
 
-      const { _pageContents, _pageMatcherResult } = source;
+      Promise.resolve().then(() => {
+        const { _pageContents, _pageMatcherResult } = source;
 
-      setMatches(
-        highlightKeywords({
-          keywordLength: rawQuery.length,
-          matchPositions: _pageMatcherResult,
-          pageContents: _pageContents,
-        })
-      );
+        setMatches(
+          highlightKeywords({
+            keywordLength: rawQuery.trim().length,
+            matchPositions: _pageMatcherResult,
+            pageContents: _pageContents,
+          })
+        );
+      });
     };
 
     eventBus.on("updatefindcontrolstate", onStateChange);
@@ -116,16 +119,20 @@ export const Search: React.FC = () => {
     };
   }, []);
 
-  const find = (searchText: string) => {
-    connector.eventBus.dispatch("find", {
-      caseSensitive: false,
-      entireWord: false,
-      findPrevious: false,
-      highlightAll: false,
-      matchDiacritics: false,
-      query: searchText,
-    });
-  };
+  const find = useCallback(
+    debounce((searchText: string) => {
+      if (searchText !== "" && searchText.length < 2) return;
+      connector.eventBus.dispatch("find", {
+        caseSensitive: false,
+        entireWord: false,
+        findPrevious: false,
+        highlightAll: false,
+        matchDiacritics: false,
+        query: searchText,
+      });
+    }, 200),
+    []
+  );
 
   return (
     <div
@@ -137,6 +144,7 @@ export const Search: React.FC = () => {
         <div className="widget-search-input-container">
           <IconSearch fill="#667085" width={20} height={20} />
           <input
+            value={searchText}
             type="text"
             placeholder="Search document"
             onChange={async e => {
@@ -145,12 +153,23 @@ export const Search: React.FC = () => {
               find(text);
             }}
           />
+          <div className="widget-search-input-clear-button">
+            <IconClose
+              fill="#667085"
+              width={20}
+              height={20}
+              onClick={() => {
+                setSearchText("");
+                find("");
+              }}
+            />
+          </div>
         </div>
       </div>
 
       {resultVisible && (
         <div className="widget-search-result">
-          {searching && <div className="">loading...</div>}
+          {/* {searching && <div className="">loading...</div>} */}
 
           <div className="widget-search-result-bar">
             <span>{total} result found</span>
@@ -170,8 +189,17 @@ export const Search: React.FC = () => {
                 </div>
 
                 <div className="">
-                  {page.highlights.map((content, index) => (
-                    <div className="widget-search-result-snippet" key={index}>
+                  {page.highlights.map((content, matchIndex) => (
+                    <div
+                      className="widget-search-result-snippet"
+                      key={matchIndex}
+                      onClick={() => {
+                        connector.app.findController.gotoMatch(
+                          page.pageIndex,
+                          matchIndex
+                        );
+                      }}
+                    >
                       {content}
                     </div>
                   ))}

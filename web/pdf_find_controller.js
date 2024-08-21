@@ -991,6 +991,58 @@ class PDFFindController {
     this.#nextPageMatch();
   }
 
+  gotoMatch(pageIndex, matchIndex) {
+    const currentPageIndex = this._linkService.page - 1;
+    const numPages = this._linkService.pagesCount;
+
+    this._highlightMatches = true;
+
+    if (this._dirtyMatch) {
+      // Need to recalculate the matches, reset everything.
+      this._dirtyMatch = false;
+      this._selected.pageIdx = this._selected.matchIdx = -1;
+      this._offset.pageIdx = currentPageIndex;
+      this._offset.matchIdx = null;
+      this._offset.wrapped = false;
+      this._resumePageIdx = null;
+      this._pageMatches.length = 0;
+      this._pageMatchesLength.length = 0;
+      this.#visitedPagesCount = 0;
+      this._matchesCountTotal = 0;
+
+      this.#updateAllPages(); // Wipe out any previously highlighted matches.
+
+      for (let i = 0; i < numPages; i++) {
+        // Start finding the matches as soon as the text is extracted.
+        if (this._pendingFindMatches.has(i)) {
+          continue;
+        }
+        this._pendingFindMatches.add(i);
+        this._extractTextPromises[i].then(() => {
+          this._pendingFindMatches.delete(i);
+          this.#calculateMatch(i);
+        });
+      }
+    }
+
+    const offset = this._offset;
+
+    this._pagesToSearch = numPages;
+
+    const numPageMatches = this._pageMatches[offset.pageIdx].length;
+
+    if (pageIndex === offset.pageIdx) {
+      if (matchIndex >= 0 && matchIndex < numPageMatches) {
+        offset.matchIdx = matchIndex;
+        this.#updateMatch(/* found = */ true);
+      }
+    } else {
+      offset.pageIdx = pageIndex;
+      offset.matchIdx = null;
+      this.#nextPageMatch();
+    }
+  }
+
   #matchesReady(matches) {
     const offset = this._offset;
     const numMatches = matches.length;
