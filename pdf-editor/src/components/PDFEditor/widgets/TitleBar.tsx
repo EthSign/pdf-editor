@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { PDFViewerApp } from "../types";
+import React, { useEffect, useState } from "react";
+import { useWidgetContext } from "./WidgetContext";
 
-
-export const TitleBar: React.FC<{ viewerApp: PDFViewerApp; }> = props => {
-  const { viewerApp } = props;
+export const TitleBar: React.FC = () => {
+  const { viewerApp } = useWidgetContext();
 
   const [title, setTitle] = useState("");
 

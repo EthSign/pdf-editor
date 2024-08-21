@@ -9,7 +9,7 @@ import { WidgetRoot } from "./widgets/WidgetRoot";
 export class PDFEditorConnector {
   viewerUrl: string;
 
-  eventBus: any;
+  eventBus!: any;
 
   app: PDFViewerApp;
 
@@ -58,10 +58,18 @@ export class PDFEditorConnector {
       "mainContainer"
     ) as HTMLDivElement;
 
+    const sidebarContentEl = contentWindow.document.getElementById(
+      "sidebarContent"
+    ) as HTMLDivElement;
+
     const widgetRoot = createRoot(rootEl!);
 
     widgetRoot.render(
-      <WidgetRoot viewerApp={PDFViewerApplication} mainSlot={mainContainerEl} />
+      <WidgetRoot
+        connector={this}
+        mainSlot={mainContainerEl}
+        sidebarSlot={sidebarContentEl}
+      />
     );
 
     contentWindow.document.body.appendChild(rootEl!);

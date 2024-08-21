@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { IconLeft, IconRight } from "../icons";
-import { PDFViewerApp } from "../types";
+import { useWidgetContext } from "./WidgetContext";
 
-export const PageIndicator: React.FC<{
-  viewerApp: PDFViewerApp;
-}> = props => {
-  const { viewerApp } = props;
+export const PageIndicator: React.FC = () => {
+  const { viewerApp } = useWidgetContext();
 
   const [currentPageInput, setCurrentPageInput] = useState(0);
 
