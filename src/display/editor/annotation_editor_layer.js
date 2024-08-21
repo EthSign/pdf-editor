@@ -760,6 +760,8 @@ class AnnotationEditorLayer {
       return;
     }
 
+    this.#uiManager.unselectAll();
+
     if (!this.#hadPointerDown) {
       // It can happen when the user starts a drag inside a text editor
       // and then releases the mouse button outside of it. In such a case

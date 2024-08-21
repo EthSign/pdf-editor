@@ -138,6 +138,11 @@ class EditorToolbar {
     this.#buttons.prepend(button, this.#divider);
   }
 
+  addElement(element) {
+    this.#addListenersToElement(element);
+    this.#buttons.prepend(element, this.#divider);
+  }
+
   remove() {
     this.#toolbar.remove();
     this.#colorPicker?.destroy();

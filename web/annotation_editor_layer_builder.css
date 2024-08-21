@@ -1191,6 +1191,73 @@
       }
     }
   }
+
+  .freeTextEditor {
+
+    .editButton {
+      background-color: red;
+      width: var(--editor-toolbar-height);
+      position: relative;
+
+      .editorParamsToolbar {
+
+        left: 0;
+        background-color: white;
+        width: 220px;
+        top: 36px;
+        position: absolute;
+        z-index: 9000;
+        height: auto;
+        inset-inline-end: 4px;
+        padding: 6px 0 10px;
+        margin: 4px 2px;
+        font: message-box;
+        font-size: 12px;
+        line-height: 14px;
+        text-align: left;
+        cursor: default;
+        display: inline-block;
+
+
+
+        &::after,
+        &::before {
+          left: 0;
+          bottom: 100%;
+          border: 8px solid rgb(0 0 0 / 0);
+          content: " ";
+          height: 0;
+          width: 0;
+          position: absolute;
+          pointer-events: none;
+          opacity: var(--doorhanger-triangle-opacity-whcm);
+        }
+
+        &::before {
+          border-bottom-color: var(--doorhanger-border-color);
+          border-width: 9px;
+        }
+
+        &:after {
+          inset-inline-end: 10px;
+          margin-inline-end: -8px;
+          border-bottom-color: var(--doorhanger-bg-color);
+        }
+
+      }
+
+      &::before {
+        content: "";
+        mask-repeat: no-repeat;
+        mask-position: center;
+        display: inline-block;
+        background-color: var(--editor-toolbar-fg-color);
+        width: 100%;
+        height: 100%;
+        mask-image: var(--toolbarButton-editorFreeText-icon);
+      }
+    }
+  }
 }
 
 .editorParamsToolbar:has(#highlightParamsToolbarContainer) {

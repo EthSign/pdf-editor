@@ -623,7 +623,7 @@ class AnnotationEditorUIManager {
 
   #annotationTempData = null;
 
-  #isDraggable = false;
+  #isDraggable = true;
 
   static TRANSLATE_SMALL = 1; // page units.
 
@@ -1989,8 +1989,6 @@ class AnnotationEditorUIManager {
    * @param {AnnotationEditor} editor
    */
   unselect(editor) {
-    console.log("unselect", editor);
-
     editor.unselect();
     this.#selectedEditors.delete(editor);
     this.#dispatchUpdateStates({

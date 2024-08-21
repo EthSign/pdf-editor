@@ -50,6 +50,8 @@ class FreeTextEditor extends AnnotationEditor {
 
   #initialData = null;
 
+  #isShowTextEditor = false;
+
   static _freeTextDefaultContent = "";
 
   static _internalPadding = 0;
@@ -159,6 +161,66 @@ class FreeTextEditor extends AnnotationEditor {
     this._internalPadding = parseFloat(
       style.getPropertyValue("--freetext-padding")
     );
+  }
+
+  /** @inheritdoc */
+  async addEditToolbar() {
+    console.log("addEditToolbar");
+
+    const toolbar = await super.addEditToolbar();
+
+    if (!toolbar) {
+      return null;
+    }
+
+    const button = document.createElement("button");
+    button.className = "editButton";
+    button.innerHTML = `<div  style="display:none" class="editorParamsToolbar doorHangerRight" id="editorFreeTextParamsToolbar">
+          <div class="editorParamsToolbarContainer">
+            <div class="editorParamsSetter" >
+              <label for="editorFreeTextColor" class="editorParamsLabel" data-l10n-id="pdfjs-editor-free-text-color-input">颜色</label>
+              <input type="color"  id="editorInkColor" class="editorParamsColor" tabindex="103">
+            </div>
+            <div class="editorParamsSetter">
+              <label for="editorFreeTextFontSize" class="editorParamsLabel" data-l10n-id="pdfjs-editor-free-text-size-input">字号</label>
+              <input type="range"  class="editorParamsSlider" value="10" min="5" max="100" step="1" tabindex="104">
+            </div>
+          </div>
+        </div>`;
+    button
+      .querySelectorAll(".editorParamsColor")[0]
+      .addEventListener("input", event => {
+        this.updateParams(
+          AnnotationEditorParamsType.FREETEXT_COLOR,
+          event.target.value
+        );
+        console.log(event.target.value);
+      });
+    button.querySelectorAll(".editorParamsSlider")[0].addEventListener(
+      "input",
+      event => {
+        this.updateParams(
+          AnnotationEditorParamsType.FREETEXT_SIZE,
+          parseInt(event.target.value, 10)
+        );
+      },
+      { passive: true }
+    );
+    button.children[0].addEventListener("click", event => {
+      event.stopPropagation();
+    });
+    button.addEventListener("click", event => {
+      if (this.#isShowTextEditor) {
+        button.children[0].style.display = "none";
+        this.#isShowTextEditor = false;
+      } else {
+        button.children[0].style.display = "block";
+        this.#isShowTextEditor = true;
+      }
+    });
+
+    toolbar.addElement(button);
+    return toolbar;
   }
 
   /** @inheritdoc */

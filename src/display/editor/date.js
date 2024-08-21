@@ -41,7 +41,7 @@ const EOL_PATTERN = /\r\n?|\n/g;
 class DateEditor extends AnnotationEditor {
   #color;
 
-  #content = "date";
+  #content = "";
 
   #editorDivId = `${this.id}-editor`;
 
@@ -50,6 +50,8 @@ class DateEditor extends AnnotationEditor {
   #fontSize;
 
   #initialData = null;
+
+  #isShowTextEditor = false;
 
   static _freeTextDefaultContent = "";
 
@@ -138,7 +140,7 @@ class DateEditor extends AnnotationEditor {
       DateEditor._defaultColor ||
       AnnotationEditor._defaultLineColor;
     this.#fontSize = params.fontSize || DateEditor._defaultFontSize;
-    this.#content = params.content;
+    this.#content = params.content || new Date().toLocaleDateString();
   }
 
   /** @inheritdoc */
@@ -161,6 +163,65 @@ class DateEditor extends AnnotationEditor {
     this._internalPadding = parseFloat(
       style.getPropertyValue("--freetext-padding")
     );
+  }
+
+  /** @inheritdoc */
+  async addEditToolbar() {
+    console.log("addEditToolbar");
+
+    const toolbar = await super.addEditToolbar();
+
+    if (!toolbar) {
+      return null;
+    }
+
+    const button = document.createElement("button");
+    button.className = "editButton";
+    button.innerHTML = `<div  style="display:none" class="editorParamsToolbar doorHangerRight" id="editorFreeTextParamsToolbar">
+            <div class="editorParamsToolbarContainer">
+              <div class="editorParamsSetter" >
+                <label for="editorFreeTextColor" class="editorParamsLabel" data-l10n-id="pdfjs-editor-free-text-color-input">颜色</label>
+                <input type="color"  id="editorInkColor" class="editorParamsColor" tabindex="103">
+              </div>
+              <div class="editorParamsSetter">
+                <label for="editorFreeTextFontSize" class="editorParamsLabel" data-l10n-id="pdfjs-editor-free-text-size-input">字号</label>
+                <input type="range"  class="editorParamsSlider" value="10" min="5" max="100" step="1" tabindex="104">
+              </div>
+            </div>
+          </div>`;
+    button
+      .querySelectorAll(".editorParamsColor")[0]
+      .addEventListener("input", event => {
+        this.updateParams(
+          AnnotationEditorParamsType.FREETEXT_COLOR,
+          event.target.value
+        );
+      });
+    button.querySelectorAll(".editorParamsSlider")[0].addEventListener(
+      "input",
+      event => {
+        this.updateParams(
+          AnnotationEditorParamsType.FREETEXT_SIZE,
+          parseInt(event.target.value, 10)
+        );
+      },
+      { passive: true }
+    );
+    button.children[0].addEventListener("click", event => {
+      event.stopPropagation();
+    });
+    button.addEventListener("click", event => {
+      if (this.#isShowTextEditor) {
+        button.children[0].style.display = "none";
+        this.#isShowTextEditor = false;
+      } else {
+        button.children[0].style.display = "block";
+        this.#isShowTextEditor = true;
+      }
+    });
+
+    toolbar.addElement(button);
+    return toolbar;
   }
 
   /** @inheritdoc */
@@ -295,7 +356,7 @@ class DateEditor extends AnnotationEditor {
     this.parent.updateToolbar(AnnotationEditorType.DATE);
     super.enableEditMode();
     this.overlayDiv.classList.remove("enabled");
-    this.editorDiv.contentEditable = true;
+    // this.editorDiv.contentEditable = true;
     this._isDraggable = false;
     this.div.removeAttribute("aria-activedescendant");
 
@@ -367,16 +428,21 @@ class DateEditor extends AnnotationEditor {
 
   /** @inheritdoc */
   onceAdded() {
-    datepicker(this.editorDiv, {
+    const picker = datepicker(this.editorDiv, {
       onSelect: (instance, date) => {
         this.editorDiv.innerText = date.toLocaleDateString();
       },
     });
+    setTimeout(() => {
+      picker.show();
+    }, 10);
+
     if (this.width) {
       // The editor was created in using ctrl+c.
       return;
     }
     this.enableEditMode();
+    this.isEditing = true;
     this.editorDiv.focus();
     if (this._initialOptions?.isCentered) {
       this.center();
@@ -569,7 +635,7 @@ class DateEditor extends AnnotationEditor {
     AnnotationEditor._l10nPromise
       .get("pdfjs-free-text-default-content")
       .then(msg => this.editorDiv?.setAttribute("default-content", msg));
-    this.editorDiv.contentEditable = true;
+    // this.editorDiv.contentEditable = true;
 
     const { style } = this.editorDiv;
     style.fontSize = `calc(${this.#fontSize}px * var(--scale-factor))`;
@@ -649,7 +715,7 @@ class DateEditor extends AnnotationEditor {
       this.editorDiv.contentEditable = false;
     } else {
       this._isDraggable = false;
-      this.editorDiv.contentEditable = true;
+      // this.editorDiv.contentEditable = true;
     }
 
     if (typeof PDFJSDev !== "undefined" && PDFJSDev.test("TESTING")) {
