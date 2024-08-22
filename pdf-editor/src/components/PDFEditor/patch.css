@@ -224,10 +224,20 @@
   border: 1px solid #d0d5dd;
   border-radius: 8px;
   height: 44px;
+
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding: 10px 14px;
+}
+
+.widget-search-input-clear-button {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 .widget-search input {
