@@ -1,7 +1,7 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import "./App.css";
-import { PDFEditor, AnnotationEditorType } from "./components/PDFEditor";
-import { usePDFEditorConnector } from "./components/PDFEditor/PDFEditorConnector";
+import { PDFEditor, AnnotationEditorType } from "./lib/components/PDFEditor/PDFEditor";
+import { usePDFEditorConnector } from "./lib/components/PDFEditor/PDFEditorConnector";
 
 import { useEffect, useState } from "react";
 
@@ -45,7 +45,7 @@ function App() {
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAABRCAYAAACqj0o2AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAQ3SURBVHgB7ZtfUhpBEMa/BfO+OYHkBHFP4HqC8JxoiSdQTxA8gXoCoWKsvGlOAJ4AcgLJCbJ5jcCme3aXP7ICCzOzC/avCrFYqBo+vp6e6Z4FBEEQBEEQBEEQBEEQhOLjoEB0aq6LPvZoVHslYHc4hDt5vVRCMAR+I0QXO+h6jSBAAchdxM6h69PTPj2q9NhDNrolB+3hAE3vLugiJ3ITsXPk1shRx/SvDz106dtce9+CBixjXUTlPAc3JGAFJnDQo78XNsW0JiLNdxWa726gz3nzcdBAmcRsBD0YxoqIsfvuyX0ubMKuDHHu3QYPMEgJhiEBT+mpZV1AJpoy7mkMX2EQoyLGg79C/tRNCmksnONB11Es6hTaF9CMERHj5csNikiImvc9aEIj2kVUWXiATi5z4HIEtNvxdGZt/XPiIKcksjxuvNTShlYRVSY2tYjWi9/54p5BE1rCWRUO/pF4ZbUWrGAz4LD+oKOIsYMV4QU0bf4/DUPagXDlhT0dQi8O+AtG2TQEZ3ud0wSHNbuxjjXJ5MS4VHVKn6oZdxwLWMYBOUVVZzqfXf6hWtArpBY3Lj0nqmULZ13+5SwLyKhS1xAHAHTWEF08kyHWZKGI7D4S8F6t+2zMdykCJhgRkqYkrMnccI7XfC1ryWKOgFPj0h3aO3i/Tki/6sSiCshod2Q/c0V9ilQnFlnASTQ6sk1j+Llq72ZGRJWBo21bBTZYUcAEQ1mbRW0uWx2fDecBrcc2REDGUNb2OZFSQn1aZmcz5cS4hP8EG2gQcBJDjozgCnk01l7a5Wkn9i2VrzQLyBhyZARHZh8dcuVx2uWRE+P+bwumMSDgJEYdyaTUI0dOdBwcwzSGBWSMOpKhLmJsuImXMNoT/4FJLAg4iYU50kuWQpET+4Z7wZYFZCzMkaP8kYSzD1PkIGCC4dCuJmGd1BM/whQhWf8Zp5TZ5r+PF7e3QRsZUF8iXGou5x/Qh364xtmORHTInroLqmPUUbmF73LwiKw4alNQQ374nE+icN6ckn7xGKBq/BjJ1jPEvoi4LtGpXiRn+oTVqCRzopnV/dvATcL5F4SVSZyY26HxLSCIRHyHBwir0lMixsXGNoTsOOiOlzghNWqEVXgci/gODUCydGbKaE/3WI6oKRPiEnngqB8x0/6ZBr8fhjnunWnM1BE8mW2ZHrpcyPQhLCY6DNUrpVw4gYT1YtiFcfdvRkR1wcE5hNeJ2gOjuxBSCxBx51/7rQpbA9+lNdGDfrWKQ1XmOkTINC5e3ua28KQsJZoqvetSCrfg2uEJ9W0aL19eWE9UqpdVs0frDTQbBc+BfO/LXfoBp2xntqPuFjdnfLwFuFMZ4poEvJp33C6TiAlxY/yMPr2/lWEe3eLbXCTe+O1rEgtaAXf1QuxiU3Hwl4sJ1N5tez/M32guCIIgCIIgCIIgCIKQif86/a+K+cQ/iwAAAABJRU5ErkJggg==";
   useEffect(() => {
     if (!connector.eventBus) return;
-    connector.eventBus.on("annotationeditorselected", event => {
+    connector.eventBus.on("annotationeditorselected", (event: any) => {
       console.log("annotationeditorselected", event);
     });
   }, [connector.eventBus]);

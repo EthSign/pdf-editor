@@ -84,7 +84,7 @@ export const Search: React.FC = () => {
   const { connector } = useWidgetContext();
 
   const [searchText, setSearchText] = useState("");
-  const [searching, setSearching] = useState(false);
+  const [, setSearching] = useState(false);
   const [matches, setMatches] = useState<HighlightedPage[]>([]);
 
   const [activeMatchIndex, setActiveMatchIndex] = useState<{

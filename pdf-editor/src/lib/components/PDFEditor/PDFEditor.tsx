@@ -12,9 +12,12 @@ export const PDFEditor: React.FC<PDFEditorProps> = props => {
   }, []);
 
   return (
-    <div className={clsx("size-full", className)}>
+    <div className={clsx("pdf-editor", className)}>
       <iframe
-        className={clsx('size-full', { visible: editorReady, invisible: !editorReady })}
+        className={clsx("size-full", {
+          visible: editorReady,
+          invisible: !editorReady,
+        })}
         src={connector.viewerUrl}
         width="100%"
         height="100%"
@@ -26,4 +29,5 @@ export const PDFEditor: React.FC<PDFEditorProps> = props => {
     </div>
   );
 };
+
 export * from "./types";
