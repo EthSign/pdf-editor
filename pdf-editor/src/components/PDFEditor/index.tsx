@@ -26,3 +26,4 @@ export const PDFEditor: React.FC<PDFEditorProps> = props => {
     </div>
   );
 };
+export * from "./types";

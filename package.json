@@ -73,6 +73,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "js-datepicker": "^5.18.2"
+    "js-datepicker": "^5.18.2",
+    "pdfjs-dist": "file:build/dist"
   }
 }

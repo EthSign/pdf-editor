@@ -416,11 +416,11 @@ class AnnotationEditor {
   }
 
   commitOrRemove() {
-    if (this.isEmpty()) {
-      this.remove();
-    } else {
-      this.commit();
-    }
+    // if (this.isEmpty()) {
+    //   this.remove();
+    // } else {
+    this.commit();
+    // }
   }
 
   /**

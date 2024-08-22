@@ -2,10 +2,9 @@ import { PDFDocument } from "pdf-lib";
 import { useRef } from "react";
 import { createRoot } from "react-dom/client";
 import cssPatch from "./patch.css?inline";
-import { PDFViewerApp } from "./types";
+import { AnnotationEditorType, PDFViewerApp } from "./types";
 import { getViewerInstance } from "./utils";
 import { WidgetRoot } from "./widgets/WidgetRoot";
-
 export class PDFEditorConnector {
   viewerUrl: string;
 
@@ -15,6 +14,28 @@ export class PDFEditorConnector {
 
   constructor(params: { viewerUrl: string }) {
     this.viewerUrl = params.viewerUrl;
+  }
+
+  setAnnotationEditorType(
+    type: AnnotationEditorType,
+    data?: { bitmapFile: string }
+  ) {
+    this.app.pdfViewer.annotationEditorUIManager.annotationTempData = {
+      mode: type,
+      ...(data || {}),
+    };
+  }
+
+  getAllAnnotations() {
+    const data = [];
+    for (const editor of this.app.pdfViewer.annotationEditorUIManager.allEditors.values()) {
+      data.push(editor.serialize(false, true));
+    }
+    return data;
+  }
+
+  setAnnotations(annotations: any[]) {
+    this.app.pdfViewer.annotationEditorUIManager.addAnnotations(annotations);
   }
 
   async addEmptyPage() {

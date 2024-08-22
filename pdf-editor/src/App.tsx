@@ -1,6 +1,6 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import "./App.css";
-import { PDFEditor } from "./components/PDFEditor";
+import { PDFEditor, AnnotationEditorType } from "./components/PDFEditor";
 import { usePDFEditorConnector } from "./components/PDFEditor/PDFEditorConnector";
 
 import { useEffect, useState } from "react";
@@ -9,18 +9,10 @@ export interface PDFEditor {
   viewerUrl: string;
 }
 
-const AnnotationEditorType = {
-  DISABLE: -1,
-  NONE: 0,
-  FREETEXT: 3,
-  DATE: 27,
-  HIGHLIGHT: 9,
-  STAMP: 13,
-  INK: 15,
-};
-
 function App() {
-  const connector = usePDFEditorConnector({ viewerUrl: "/web/viewer.html" });
+  const connector = usePDFEditorConnector({
+    viewerUrl: "/web/viewer.html?#locale=en-US",
+  });
 
   const [annots, setAnnots] = useState<any[]>([
     {
@@ -117,10 +109,9 @@ function App() {
               }}
               onClick={() => {
                 if (!connector) return;
-                connector.app.pdfViewer.annotationEditorUIManager.annotationTempData =
-                  {
-                    mode: AnnotationEditorType.FREETEXT,
-                  };
+                connector.setAnnotationEditorType(
+                  AnnotationEditorType.FREETEXT
+                );
               }}
             >
               文字工具
@@ -137,10 +128,7 @@ function App() {
               }}
               onClick={() => {
                 if (!connector.app) return;
-                connector.app.pdfViewer.annotationEditorUIManager.annotationTempData =
-                  {
-                    mode: AnnotationEditorType.DATE,
-                  };
+                connector.setAnnotationEditorType(AnnotationEditorType.DATE);
               }}
             >
               日期工具
@@ -158,11 +146,9 @@ function App() {
               }}
               onClick={() => {
                 if (!connector.app) return;
-                connector.app.pdfViewer.annotationEditorUIManager.annotationTempData =
-                  {
-                    mode: AnnotationEditorType.STAMP,
-                    bitmapFile: img,
-                  };
+                connector.setAnnotationEditorType(AnnotationEditorType.STAMP, {
+                  bitmapFile: img,
+                });
               }}
             >
               图片工具
@@ -171,12 +157,7 @@ function App() {
               onClick={() => {
                 if (!connector.app) return;
 
-                const data = [];
-                for (const editor of connector.app.pdfViewer.annotationEditorUIManager.allEditors.values()) {
-                  data.push(editor.serialize(false, true));
-                }
-                setAnnots(data);
-                console.log(data);
+                setAnnots(connector.getAllAnnotations());
               }}
             >
               获取注释序列化
@@ -184,9 +165,7 @@ function App() {
             <button
               onClick={() => {
                 if (!connector.app) return;
-                connector.app.pdfViewer.annotationEditorUIManager.addAnnotations(
-                  annots
-                );
+                connector.setAnnotations(annots);
               }}
             >
               添加注释

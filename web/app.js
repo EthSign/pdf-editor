@@ -194,9 +194,9 @@ const PDFViewerApplication = {
     } catch (ex) {
       console.error(`initialize: "${ex.message}".`);
     }
-    if (AppOptions.get("pdfBugEnabled")) {
-      await this._parseHashParams();
-    }
+    // if (AppOptions.get("pdfBugEnabled")) {
+    await this._parseHashParams();
+    // }
 
     if (typeof PDFJSDev === "undefined" || !PDFJSDev.test("MOZCENTRAL")) {
       let mode;
