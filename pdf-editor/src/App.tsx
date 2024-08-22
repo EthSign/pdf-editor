@@ -1,6 +1,5 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import "./App.css";
-import { PDFEditor, AnnotationEditorType } from "./lib/components/PDFEditor/PDFEditor";
+import { AnnotationEditorType, PDFEditor } from "./lib/components/PDFEditor/PDFEditor";
 import { usePDFEditorConnector } from "./lib/components/PDFEditor/PDFEditorConnector";
 
 import { useEffect, useState } from "react";
@@ -11,7 +10,7 @@ export interface PDFEditor {
 
 function App() {
   const connector = usePDFEditorConnector({
-    viewerUrl: "/web/viewer.html?#locale=en-US",
+    viewerUrl: "/pdf-viewer/web/viewer.html?#locale=en-US",
   });
 
   const [annots, setAnnots] = useState<any[]>([

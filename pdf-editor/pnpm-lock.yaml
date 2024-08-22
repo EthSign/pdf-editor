@@ -8,30 +8,18 @@ importers:
 
   .:
     dependencies:
-      autoprefixer:
-        specifier: ^10.4.20
-        version: 10.4.20(postcss@8.4.41)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      eslint-plugin-tailwindcss:
-        specifier: ^3.17.4
-        version: 3.17.4(tailwindcss@3.4.10)
       pdf-lib:
         specifier: ^1.17.1
         version: 1.17.1
-      postcss:
-        specifier: ^8.4.41
-        version: 8.4.41
       react:
         specifier: ^18.3.1
         version: 18.3.1
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
-      tailwindcss:
-        specifier: ^3.4.10
-        version: 3.4.10
     devDependencies:
       '@eslint/js':
         specifier: ^9.9.0
@@ -45,6 +33,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.3.1
         version: 4.3.1(vite@5.4.1)
+      autoprefixer:
+        specifier: ^10.4.20
+        version: 10.4.20(postcss@8.4.41)
       eslint:
         specifier: ^9.9.0
         version: 9.9.0(jiti@1.21.6)
@@ -54,9 +45,18 @@ importers:
       eslint-plugin-react-refresh:
         specifier: ^0.4.9
         version: 0.4.9(eslint@9.9.0(jiti@1.21.6))
+      eslint-plugin-tailwindcss:
+        specifier: ^3.17.4
+        version: 3.17.4(tailwindcss@3.4.10)
       globals:
         specifier: ^15.9.0
         version: 15.9.0
+      postcss:
+        specifier: ^8.4.41
+        version: 8.4.41
+      tailwindcss:
+        specifier: ^3.4.10
+        version: 3.4.10
       typescript:
         specifier: ^5.5.3
         version: 5.5.4
