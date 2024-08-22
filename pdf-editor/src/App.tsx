@@ -49,6 +49,7 @@ function App() {
       console.log("annotationeditorselected", event);
     });
   }, [connector.eventBus]);
+
   return (
     <div>
       <div className="w-screen h-screen flex">
@@ -189,7 +190,7 @@ function App() {
           </div>
         </div>
 
-        <PDFEditor connector={connector} />
+        <PDFEditor className="flex-1 overflow-hidden" connector={connector} />
       </div>
     </div>
   );

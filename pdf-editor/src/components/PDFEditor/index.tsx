@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { PDFEditorProps } from "./types";
 
 export const PDFEditor: React.FC<PDFEditorProps> = props => {
-  const { connector } = props;
+  const { className, connector } = props;
 
   const [editorReady, setEditorReady] = useState(false);
 
@@ -12,9 +12,9 @@ export const PDFEditor: React.FC<PDFEditorProps> = props => {
   }, []);
 
   return (
-    <div className="size-full">
+    <div className={clsx("size-full", className)}>
       <iframe
-        className={clsx({ visible: editorReady, invisible: !editorReady })}
+        className={clsx('size-full', { visible: editorReady, invisible: !editorReady })}
         src={connector.viewerUrl}
         width="100%"
         height="100%"

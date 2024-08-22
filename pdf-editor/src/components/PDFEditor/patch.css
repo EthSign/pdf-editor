@@ -18,19 +18,24 @@
   display: none;
 }
 
+#outerContainer {
+  overflow: hidden;
+}
+
 #toolbarSidebar {
   display: none;
   inset-inline-start: unset !important;
 }
 
 #outerContainer.sidebarOpen #sidebarContainer {
-  inset-inline-start: unset !important;
-  right: 0;
+  border-inline-end: 0;
+  inset-inline-start: unset;
+  inset-inline-end: 0;
 }
 
 #outerContainer.sidebarOpen #viewerContainer:not(.pdfPresentationMode) {
   inset-block-start: 50px;
-  inset-inline-start: calc(var(--sidebar-width) * -1);
+  inset-inline: 0 var(--sidebar-width);
 }
 
 #sidebarContent {

@@ -1,8 +1,9 @@
 import { PDFEditorConnector } from "./PDFEditorConnector";
 
-export interface PDFEditorInstance {}
+export interface PDFEditorInstance { }
 
 export interface PDFEditorProps {
+  className?: string;
   connector: PDFEditorConnector;
 }
 

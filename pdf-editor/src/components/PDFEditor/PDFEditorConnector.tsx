@@ -67,6 +67,9 @@ export class PDFEditorConnector {
     this.app = PDFViewerApplication;
     this.eventBus = PDFViewerApplication.eventBus;
 
+    /* ------------------------- reset default UI state ------------------------- */
+    PDFViewerApplication.pdfSidebar.open();
+
     /* ------------------------------- patch style ------------------------------ */
     const style = contentWindow.document.createElement("style");
     style.innerText = cssPatch;

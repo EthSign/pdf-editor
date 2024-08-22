@@ -33,6 +33,7 @@ export const PageIndicator: React.FC = () => {
     <div className="widget-page-indicator-wrapper">
       <div className="widget-page-indicator">
         <IconLeft
+          fill="white"
           onClick={() => {
             viewerApp.pdfViewer.previousPage();
           }}
@@ -61,6 +62,7 @@ export const PageIndicator: React.FC = () => {
         </div>
 
         <IconRight
+          fill="white"
           onClick={() => {
             viewerApp.pdfViewer.nextPage();
           }}
