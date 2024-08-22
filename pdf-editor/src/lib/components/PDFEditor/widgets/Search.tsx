@@ -18,13 +18,13 @@ interface HighlightedPage {
 const getSnippet = (
   content: string,
   position: number,
-  keywordLength: number
+  keywordLength: number,
 ) => {
   const snippetLength = 30;
   const start = Math.max(position - snippetLength / 2, 0);
   const end = Math.min(
     position + keywordLength + snippetLength / 2,
-    content.length
+    content.length,
   );
 
   let snippet = content.slice(start, end);
@@ -66,7 +66,7 @@ const highlightKeywords = ({
             }
             return acc;
           },
-          []
+          [],
         );
 
         return <div key={i}>{highlightedSnippet}</div>;
@@ -77,7 +77,7 @@ const highlightKeywords = ({
         highlights,
       };
     })
-    .filter(page => page !== null) as HighlightedPage[];
+    .filter((page) => page !== null) as HighlightedPage[];
 };
 
 export const Search: React.FC = () => {
@@ -113,7 +113,7 @@ export const Search: React.FC = () => {
               keywordLength: rawQuery.trim().length,
               matchPositions: _pageMatcherResult,
               pageContents: _pageContents,
-            })
+            }),
           );
         });
       },
@@ -146,7 +146,7 @@ export const Search: React.FC = () => {
         query: searchText,
       });
     }, 200),
-    []
+    [],
   );
 
   return (
@@ -162,7 +162,7 @@ export const Search: React.FC = () => {
             value={searchText}
             type="text"
             placeholder="Search document"
-            onChange={async e => {
+            onChange={async (e) => {
               const text = e.target.value;
               setSearchText(text);
               find(text);
@@ -227,7 +227,7 @@ export const Search: React.FC = () => {
           </div>
 
           <div className="">
-            {matches.map(page => (
+            {matches.map((page) => (
               <div className="widget-search-result-page" key={page.pageIndex}>
                 <div className="widget-search-result-page-number">
                   Page {page.pageIndex + 1}
@@ -245,7 +245,7 @@ export const Search: React.FC = () => {
                       onClick={() => {
                         connector.app.findController.gotoMatch(
                           page.pageIndex,
-                          matchIndex
+                          matchIndex,
                         );
                       }}
                     >

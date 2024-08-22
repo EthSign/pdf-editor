@@ -34,8 +34,8 @@ export default defineConfig({
           react: "React",
           "react/jsx-runtime": "react/jsx-runtime",
           "react-dom": "ReactDOM",
-          "clsx": "clsx",
-          "pdf-lib": "PDFLib"
+          clsx: "clsx",
+          "pdf-lib": "PDFLib",
         },
       },
     },

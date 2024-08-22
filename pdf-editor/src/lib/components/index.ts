@@ -1,1 +1,1 @@
-export * from './PDFEditor'
+export * from "./PDFEditor";

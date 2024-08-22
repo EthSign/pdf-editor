@@ -5,6 +5,7 @@ import cssPatch from "./patch.css?inline";
 import { AnnotationEditorType, PDFViewerApp } from "./types";
 import { getViewerInstance } from "./utils";
 import { WidgetRoot } from "./widgets/WidgetRoot";
+
 export class PDFEditorConnector {
   viewerUrl: string;
 
@@ -18,7 +19,7 @@ export class PDFEditorConnector {
 
   setAnnotationEditorType(
     type: AnnotationEditorType,
-    data?: { bitmapFile: string }
+    data?: { bitmapFile: string },
   ) {
     this.app.pdfViewer.annotationEditorUIManager.annotationTempData = {
       mode: type,
@@ -79,11 +80,11 @@ export class PDFEditorConnector {
     const rootEl = contentWindow.document.createElement("div");
 
     const mainContainerEl = contentWindow.document.getElementById(
-      "mainContainer"
+      "mainContainer",
     ) as HTMLDivElement;
 
     const sidebarContentEl = contentWindow.document.getElementById(
-      "sidebarContent"
+      "sidebarContent",
     ) as HTMLDivElement;
 
     const widgetRoot = createRoot(rootEl!);
@@ -93,7 +94,7 @@ export class PDFEditorConnector {
         connector={this}
         mainSlot={mainContainerEl}
         sidebarSlot={sidebarContentEl}
-      />
+      />,
     );
 
     contentWindow.document.body.appendChild(rootEl!);
@@ -109,10 +110,10 @@ export class PDFEditorConnector {
 }
 
 export const usePDFEditorConnector = (
-  params: ConstructorParameters<typeof PDFEditorConnector>["0"]
+  params: ConstructorParameters<typeof PDFEditorConnector>["0"],
 ) => {
   const connectorRef = useRef<PDFEditorConnector>(
-    new PDFEditorConnector(params)
+    new PDFEditorConnector(params),
   );
 
   return connectorRef.current;

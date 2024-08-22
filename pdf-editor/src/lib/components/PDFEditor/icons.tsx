@@ -1,6 +1,6 @@
 import React, { SVGAttributes } from "react";
 
-export const IconRight: React.FC<SVGAttributes<HTMLOrSVGElement>> = props => {
+export const IconRight: React.FC<SVGAttributes<HTMLOrSVGElement>> = (props) => {
   return (
     <svg
       width={16}
@@ -15,7 +15,7 @@ export const IconRight: React.FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   );
 };
 
-export const IconLeft: React.FC<SVGAttributes<HTMLOrSVGElement>> = props => {
+export const IconLeft: React.FC<SVGAttributes<HTMLOrSVGElement>> = (props) => {
   return (
     <svg
       width={16}
@@ -30,7 +30,9 @@ export const IconLeft: React.FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   );
 };
 
-export const IconSearch: React.FC<SVGAttributes<HTMLOrSVGElement>> = props => {
+export const IconSearch: React.FC<SVGAttributes<HTMLOrSVGElement>> = (
+  props,
+) => {
   return (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
       <title>icon - header - search</title>
@@ -39,7 +41,7 @@ export const IconSearch: React.FC<SVGAttributes<HTMLOrSVGElement>> = props => {
   );
 };
 
-export const IconClose: React.FC<SVGAttributes<HTMLOrSVGElement>> = props => {
+export const IconClose: React.FC<SVGAttributes<HTMLOrSVGElement>> = (props) => {
   return (
     <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
       <title>icon - close</title>

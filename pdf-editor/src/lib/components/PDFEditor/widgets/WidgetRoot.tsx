@@ -10,7 +10,7 @@ export const WidgetRoot: React.FC<{
   connector: PDFEditorConnector;
   mainSlot: HTMLDivElement;
   sidebarSlot: HTMLElement;
-}> = props => {
+}> = (props) => {
   const { connector, mainSlot, sidebarSlot } = props;
 
   return (
@@ -21,7 +21,7 @@ export const WidgetRoot: React.FC<{
             <TitleBar />
             <PageIndicator />
           </>,
-          mainSlot
+          mainSlot,
         )}
 
         {createPortal(<Search />, sidebarSlot)}

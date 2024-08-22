@@ -14,7 +14,7 @@ export const getViewerInstance = (pdfIframe: HTMLIFrameElement) => {
 
 export function debounce<T extends (...args: any[]) => void>(
   func: T,
-  wait: number
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null;
 
@@ -32,7 +32,7 @@ export function debounce<T extends (...args: any[]) => void>(
 export class EventHelper {
   constructor(
     public eventBus: any,
-    public listeners: Record<string, (...args: unknown[]) => void>
+    public listeners: Record<string, (...args: unknown[]) => void>,
   ) {}
 
   mount() {
