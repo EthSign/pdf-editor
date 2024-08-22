@@ -376,7 +376,6 @@ class StampEditor extends AnnotationEditor {
     this.div.hidden = true;
 
     // this.addAltTextButton();
-
     if (this.#bitmap) {
       this.#createCanvas();
     } else {

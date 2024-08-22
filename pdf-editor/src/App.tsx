@@ -157,8 +157,10 @@ function App() {
             <button
               onClick={() => {
                 if (!connector.app) return;
+                const annots = connector.getAllAnnotations();
+                console.log(annots);
 
-                setAnnots(connector.getAllAnnotations());
+                setAnnots(annots);
               }}
             >
               获取注释序列化

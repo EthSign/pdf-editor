@@ -92,6 +92,8 @@ class AnnotationEditor {
 
   #zIndex = AnnotationEditor._zIndex++;
 
+  data = {};
+
   static _borderLineWidth = -1;
 
   static _colorManager = new ColorManager();
@@ -149,7 +151,9 @@ class AnnotationEditor {
 
     this.parent = parameters.parent;
     this.id = parameters.id;
-    this.width = this.height = null;
+    const [parentWidth, parentHeight] = this.parent.pageDimensions || [1, 1];
+    this.width = parameters.width / parentWidth || null;
+    this.height = parameters.height / parentHeight || null;
     this.pageIndex = parameters.parent.pageIndex;
     this.name = parameters.name;
     this.div = null;
@@ -159,6 +163,7 @@ class AnnotationEditor {
     this._initialOptions.isCentered = parameters.isCentered;
     this._structTreeParentId = null;
     this.isCanMove = parameters.isCanMove;
+    this.data = parameters.data;
 
     const {
       rotation,
