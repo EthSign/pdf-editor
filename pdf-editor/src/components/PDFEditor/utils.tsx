@@ -28,3 +28,24 @@ export function debounce<T extends (...args: any[]) => void>(
     }, wait);
   };
 }
+
+export class EventHelper {
+  constructor(
+    public eventBus: any,
+    public listeners: Record<string, (...args: unknown[]) => void>
+  ) {}
+
+  mount() {
+    for (let event in this.listeners) {
+      const handler = this.listeners[event];
+      this.eventBus.on(event, handler);
+    }
+  }
+
+  unmount() {
+    for (let event in this.listeners) {
+      const handler = this.listeners[event];
+      this.eventBus.off(event, handler);
+    }
+  }
+}

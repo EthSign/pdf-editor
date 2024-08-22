@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { IconClose, IconLeft, IconRight, IconSearch } from "../icons";
-import { debounce } from "../utils";
+import { debounce, EventHelper } from "../utils";
 import { useWidgetContext } from "./WidgetContext";
 
 interface HighlightProps {
@@ -87,6 +87,11 @@ export const Search: React.FC = () => {
   const [searching, setSearching] = useState(false);
   const [matches, setMatches] = useState<HighlightedPage[]>([]);
 
+  const [activeMatchIndex, setActiveMatchIndex] = useState<{
+    pageIndex: number;
+    matchIndex: number;
+  }>();
+
   const total = useMemo(() => {
     return matches.reduce((acc, cur) => acc + cur.highlights.length, 0);
   }, [matches]);
@@ -96,31 +101,41 @@ export const Search: React.FC = () => {
   useEffect(() => {
     const eventBus = connector.eventBus;
 
-    const onStateChange = ({ source, state, rawQuery }: any) => {
-      setSearching(state === 3);
+    const helper = new EventHelper(eventBus, {
+      updatefindcontrolstate: ({ source, state, rawQuery }: any) => {
+        setSearching(state === 3);
 
-      Promise.resolve().then(() => {
-        const { _pageContents, _pageMatcherResult } = source;
+        Promise.resolve().then(() => {
+          const { _pageContents, _pageMatcherResult } = source;
 
-        setMatches(
-          highlightKeywords({
-            keywordLength: rawQuery.trim().length,
-            matchPositions: _pageMatcherResult,
-            pageContents: _pageContents,
-          })
-        );
-      });
-    };
+          setMatches(
+            highlightKeywords({
+              keywordLength: rawQuery.trim().length,
+              matchPositions: _pageMatcherResult,
+              pageContents: _pageContents,
+            })
+          );
+        });
+      },
 
-    eventBus.on("updatefindcontrolstate", onStateChange);
+      findoffsetchange: ({ pageIdx, matchIdx }: any) => {
+        setActiveMatchIndex({
+          matchIndex: matchIdx,
+          pageIndex: pageIdx,
+        });
+      },
+    });
+
+    helper.mount();
 
     return () => {
-      eventBus.off("updatefindcontrolstate", onStateChange);
+      helper.unmount();
     };
   }, []);
 
   const find = useCallback(
     debounce((searchText: string) => {
+      setMatches([]);
       if (searchText !== "" && searchText.length < 2) return;
       connector.eventBus.dispatch("find", {
         caseSensitive: false,
@@ -175,9 +190,39 @@ export const Search: React.FC = () => {
             <span>{total} result found</span>
 
             <div className="widget-search-result-bar-icons">
-              <IconLeft fill="black" width={20} height={20} />
+              <IconLeft
+                fill="#868e96"
+                width={20}
+                height={20}
+                onClick={() => {
+                  connector.eventBus.dispatch("find", {
+                    caseSensitive: false,
+                    entireWord: false,
+                    findPrevious: true,
+                    highlightAll: false,
+                    matchDiacritics: false,
+                    query: searchText,
+                    type: "again",
+                  });
+                }}
+              />
 
-              <IconRight fill="black" width={20} height={20} />
+              <IconRight
+                fill="#868e96"
+                width={20}
+                height={20}
+                onClick={() => {
+                  connector.eventBus.dispatch("find", {
+                    caseSensitive: false,
+                    entireWord: false,
+                    findPrevious: false,
+                    highlightAll: false,
+                    matchDiacritics: false,
+                    query: searchText,
+                    type: "again",
+                  });
+                }}
+              />
             </div>
           </div>
 
@@ -191,7 +236,11 @@ export const Search: React.FC = () => {
                 <div className="">
                   {page.highlights.map((content, matchIndex) => (
                     <div
-                      className="widget-search-result-snippet"
+                      className={clsx("widget-search-result-snippet", {
+                        active:
+                          activeMatchIndex?.pageIndex === page.pageIndex &&
+                          activeMatchIndex.matchIndex === matchIndex,
+                      })}
                       key={matchIndex}
                       onClick={() => {
                         connector.app.findController.gotoMatch(

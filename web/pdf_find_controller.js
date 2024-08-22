@@ -559,11 +559,20 @@ class PDFFindController {
       matchIdx: -1,
     };
     // Where the find algorithm currently is in the document.
-    this._offset = {
-      pageIdx: null,
-      matchIdx: null,
-      wrapped: false,
-    };
+    this._offset = new Proxy(
+      {
+        pageIdx: null,
+        matchIdx: null,
+        wrapped: false,
+      },
+      {
+        set: (target, prop, receiver) => {
+          this._eventBus.dispatch("findoffsetchange", target);
+          target[prop] = receiver;
+          return true;
+        },
+      }
+    );
     this._extractTextPromises = [];
     this._pageContents = []; // Stores the normalized text for each page.
     this._pageDiffs = [];
@@ -1029,18 +1038,9 @@ class PDFFindController {
 
     this._pagesToSearch = numPages;
 
-    const numPageMatches = this._pageMatches[offset.pageIdx].length;
-
-    if (pageIndex === offset.pageIdx) {
-      if (matchIndex >= 0 && matchIndex < numPageMatches) {
-        offset.matchIdx = matchIndex;
-        this.#updateMatch(/* found = */ true);
-      }
-    } else {
-      offset.pageIdx = pageIndex;
-      offset.matchIdx = null;
-      this.#nextPageMatch();
-    }
+    offset.pageIdx = pageIndex;
+    offset.matchIdx = matchIndex;
+    this.#updateMatch(/* found = */ true);
   }
 
   #matchesReady(matches) {

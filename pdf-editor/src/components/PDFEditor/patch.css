@@ -250,6 +250,10 @@
   font-size: 17px;
 }
 
+.widget-search-result-bar-icons svg {
+  cursor: pointer;
+}
+
 .widget-search-result-page {
   margin-top: 8px;
 }
@@ -275,6 +279,10 @@
   background: white;
   word-break: break-all;
   color: #485056;
+}
+
+.widget-search-result-snippet.active {
+  border-color: #3183c8;
 }
 
 .widget-search-result-snippet mark {
