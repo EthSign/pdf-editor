@@ -913,6 +913,7 @@ class DateEditor extends AnnotationEditor {
     );
 
     const serialized = {
+      ...super.serialize(),
       annotationType: AnnotationEditorType.DATE,
       color,
       fontSize: this.#fontSize,

@@ -176,7 +176,11 @@ class ImageManager {
 
   async getFromFile(file) {
     const { lastModified, name, size, type } = file;
-    return this.#get(`${lastModified}_${name}_${size}_${type}`, file);
+    let id = `${lastModified}_${name}_${size}_${type}`;
+    if (typeof file === "string") {
+      id = file;
+    }
+    return this.#get(id, file);
   }
 
   async getFromUrl(url) {
@@ -624,6 +628,8 @@ class AnnotationEditorUIManager {
   #annotationTempData = null;
 
   #isDraggable = true;
+
+  tempAnnotationData = {};
 
   static TRANSLATE_SMALL = 1; // page units.
 
@@ -1439,11 +1445,20 @@ class AnnotationEditorUIManager {
     }
 
     this.unselectAll();
-    const layer = this.currentLayer;
 
     try {
       const newEditors = [];
       for (const editor of data) {
+        const layer = this.getLayer(editor.pageIndex);
+        if (!layer) {
+          const item = this.tempAnnotationData[editor.pageIndex];
+          if (item) {
+            item.push(editor);
+          } else {
+            this.tempAnnotationData[editor.pageIndex] = [editor];
+          }
+          continue;
+        }
         const deserializedEditor = layer.deserialize(editor);
         if (!deserializedEditor) {
           return;
@@ -1455,7 +1470,12 @@ class AnnotationEditorUIManager {
         for (const editor of newEditors) {
           this.#addEditorToLayer(editor);
         }
-        this.#selectEditors(newEditors);
+        if (newEditors.length > 0) {
+          this.eventBus.dispatch("annotationEditorChange", {
+            action: "add",
+            data: newEditors,
+          });
+        }
       };
       const undo = () => {
         for (const editor of newEditors) {
@@ -1852,6 +1872,17 @@ class AnnotationEditorUIManager {
     ) {
       this.#annotationStorage?.remove(editor.id);
     }
+    this._eventBus.dispatch("annotationEditorChange", {
+      action: "delete",
+      data: this,
+    });
+  }
+
+  removeEditorById(id) {
+    const editor = this.#allEditors.get(id);
+    if (editor) {
+      editor.remove();
+    }
   }
 
   /**
@@ -1956,7 +1987,6 @@ class AnnotationEditorUIManager {
    * @param {AnnotationEditor} editor
    */
   setSelected(editor) {
-    this._eventBus.dispatch("annotationeditorselected", editor);
     for (const ed of this.#selectedEditors) {
       if (ed !== editor) {
         ed.unselect();
@@ -1969,6 +1999,10 @@ class AnnotationEditorUIManager {
     this.#dispatchUpdateUI(editor.propertiesToUpdate);
     this.#dispatchUpdateStates({
       hasSelectedEditor: true,
+    });
+    this._eventBus.dispatch("annotationEditorSelected", {
+      action: "selected",
+      data: editor,
     });
   }
 
@@ -1993,6 +2027,10 @@ class AnnotationEditorUIManager {
     this.#selectedEditors.delete(editor);
     this.#dispatchUpdateStates({
       hasSelectedEditor: this.hasSelection,
+    });
+    this._eventBus.dispatch("annotationEditorSelected", {
+      action: "unSelected",
+      data: editor,
     });
   }
 
@@ -2139,6 +2177,10 @@ class AnnotationEditorUIManager {
     }
     for (const editor of this.#selectedEditors) {
       editor.unselect();
+      this._eventBus.dispatch("annotationEditorSelected", {
+        action: "unSelected",
+        data: editor,
+      });
     }
     this.#selectedEditors.clear();
     this.#dispatchUpdateStates({
@@ -2274,6 +2316,10 @@ class AnnotationEditorUIManager {
         }
       },
       mustExec: true,
+    });
+    this._eventBus.dispatch("annotationEditorChange", {
+      action: "modify",
+      data: [this],
     });
 
     return true;

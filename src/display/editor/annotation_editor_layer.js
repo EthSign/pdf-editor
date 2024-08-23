@@ -256,6 +256,10 @@ class AnnotationEditorLayer {
         annotationElementIds.add(editor.annotationElementId);
       }
     }
+    this.#uiManager.addAnnotations(
+      this.#uiManager.tempAnnotationData[this.pageIndex]
+    );
+    this.#uiManager.tempAnnotationData[this.pageIndex] = [];
 
     if (!this.#annotationLayer) {
       return;
@@ -527,6 +531,7 @@ class AnnotationEditorLayer {
     editor.fixAndSetPosition();
     editor.onceAdded();
     this.#uiManager.addToAnnotationStorage(editor);
+
     editor._reportTelemetry(editor.telemetryInitialData);
   }
 
@@ -686,6 +691,10 @@ class AnnotationEditorLayer {
     if (editor) {
       this.add(editor);
     }
+    this.#uiManager._eventBus.dispatch("annotationEditorChange", {
+      action: "add",
+      data: [editor],
+    });
 
     return editor;
   }

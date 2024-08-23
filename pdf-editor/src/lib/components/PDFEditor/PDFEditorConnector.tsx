@@ -10,6 +10,8 @@ export class PDFEditorConnector {
 
   eventBus!: any;
 
+  iframeWindow!: Window;
+
   app: PDFViewerApp;
 
   constructor(params: { viewerUrl: string }) {
@@ -29,13 +31,23 @@ export class PDFEditorConnector {
   getAllAnnotations() {
     const data = [];
     for (const editor of this.app.pdfViewer.annotationEditorUIManager.allEditors.values()) {
-      data.push(editor.serialize(false, true));
+      const serialized = editor.serialize(false, true);
+      if (serialized) data.push(serialized);
     }
     return data;
   }
 
   setAnnotations(annotations: any[]) {
     this.app.pdfViewer.annotationEditorUIManager.addAnnotations(annotations);
+  }
+
+  removeAnnotationById(id: string) {
+    this.app.pdfViewer.annotationEditorUIManager.removeEditorById(id);
+  }
+
+  getAnnotationById(id: string) {
+    if (!id) return null;
+    return this.app.pdfViewer.annotationEditorUIManager?.getEditor(id);
   }
 
   async addEmptyPage() {
@@ -62,6 +74,7 @@ export class PDFEditorConnector {
   async connect(pdfViewerIframe: HTMLIFrameElement) {
     const contentWindow = pdfViewerIframe.contentWindow;
     if (!contentWindow) throw new Error();
+    this.iframeWindow = contentWindow;
 
     const { PDFViewerApplication } = getViewerInstance(pdfViewerIframe);
     this.app = PDFViewerApplication;

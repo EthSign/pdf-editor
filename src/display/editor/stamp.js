@@ -216,7 +216,7 @@ class StampEditor extends AnnotationEditor {
     return altText;
   }
 
-  #getBitmap() {
+  async #getBitmap() {
     if (this.#bitmapId) {
       this._uiManager.enableWaiting(true);
       this._uiManager.imageManager
@@ -239,7 +239,6 @@ class StampEditor extends AnnotationEditor {
 
     if (this.#bitmapFile) {
       const file = this.#bitmapFile;
-      this.#bitmapFile = null;
       this._uiManager.enableWaiting(true);
       this.#bitmapPromise = this._uiManager.imageManager
         .getFromFile(file)
@@ -655,6 +654,9 @@ class StampEditor extends AnnotationEditor {
       // We convert to a data url because it's sync and the url can live in the
       // clipboard.
       const canvas = document.createElement("canvas");
+      if (!this.#bitmap) {
+        return "";
+      }
       ({ width: canvas.width, height: canvas.height } = this.#bitmap);
       const ctx = canvas.getContext("2d");
       ctx.drawImage(this.#bitmap, 0, 0);
@@ -723,11 +725,11 @@ class StampEditor extends AnnotationEditor {
       return null;
     }
     const editor = super.deserialize(data, parent, uiManager);
-    const { rect, bitmapUrl, bitmapId, isSvg, accessibilityData } = data;
+    const { rect, bitmapId, isSvg, accessibilityData, bitmapFile } = data;
     if (bitmapId && uiManager.imageManager.isValidId(bitmapId)) {
       editor.#bitmapId = bitmapId;
     } else {
-      editor.#bitmapUrl = bitmapUrl;
+      editor.#bitmapFile = bitmapFile;
     }
     editor.#isSvg = isSvg;
     editor.eidtorId = data.eidtorId;
@@ -750,6 +752,7 @@ class StampEditor extends AnnotationEditor {
     }
 
     const serialized = {
+      ...super.serialize(),
       annotationType: AnnotationEditorType.STAMP,
       bitmapId: this.#bitmapId,
       pageIndex: this.pageIndex,
@@ -763,6 +766,9 @@ class StampEditor extends AnnotationEditor {
       // We don't know what's the final destination (this pdf or another one)
       // of this annotation and the clipboard doesn't support ImageBitmaps,
       // hence we serialize the bitmap to a data url.
+      if (typeof this.#bitmapFile === "string") {
+        serialized.bitmapFile = this.#bitmapFile;
+      }
       serialized.bitmapUrl = this.#serializeBitmap(/* toUrl = */ true);
       serialized.accessibilityData = this.serializeAltText(true);
       if (context) {

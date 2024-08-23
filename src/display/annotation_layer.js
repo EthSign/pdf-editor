@@ -3125,7 +3125,6 @@ class AnnotationLayer {
     this.viewport = viewport;
     this.zIndex = 0;
     this._annotationEditorUIManager = annotationEditorUIManager;
-
     if (typeof PDFJSDev !== "undefined" && PDFJSDev.test("TESTING")) {
       // For testing purposes.
       Object.defineProperty(this, "showPopups", {

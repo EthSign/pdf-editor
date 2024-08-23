@@ -904,6 +904,7 @@ class FreeTextEditor extends AnnotationEditor {
     );
 
     const serialized = {
+      ...super.serialize(),
       annotationType: AnnotationEditorType.FREETEXT,
       color,
       fontSize: this.#fontSize,

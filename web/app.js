@@ -719,7 +719,7 @@ const PDFViewerApplication = {
         }
       });
       appConfig.mainContainer.addEventListener("drop", function (evt) {
-        if (evt.dataTransfer.files?.[0].type !== "application/pdf") {
+        if (evt.dataTransfer.files?.[0]?.type !== "application/pdf") {
           return;
         }
         evt.preventDefault();

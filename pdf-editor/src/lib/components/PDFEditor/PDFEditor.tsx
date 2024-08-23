@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { PDFEditorProps } from "./types";
 
 export const PDFEditor: React.FC<PDFEditorProps> = props => {
-  const { className, connector } = props;
+  const { className, connector, onReady } = props;
 
   const [editorReady, setEditorReady] = useState(false);
 
@@ -24,6 +24,7 @@ export const PDFEditor: React.FC<PDFEditorProps> = props => {
         onLoad={async event => {
           await connector.connect(event.target as HTMLIFrameElement);
           setEditorReady(true);
+          onReady?.(connector);
         }}
       />
     </div>

@@ -92,7 +92,7 @@ class AnnotationEditor {
 
   #zIndex = AnnotationEditor._zIndex++;
 
-  data = {};
+  #data = {};
 
   static _borderLineWidth = -1;
 
@@ -163,7 +163,7 @@ class AnnotationEditor {
     this._initialOptions.isCentered = parameters.isCentered;
     this._structTreeParentId = null;
     this.isCanMove = parameters.isCanMove;
-    this.data = parameters.data;
+    this.#data = parameters.data;
 
     const {
       rotation,
@@ -194,6 +194,18 @@ class AnnotationEditor {
       "_defaultLineColor",
       this._colorManager.getHexCode("CanvasText")
     );
+  }
+
+  get data() {
+    return this.#data;
+  }
+
+  set data(data) {
+    this.#data = data;
+    this._uiManager._eventBus.dispatch("annotationEditorChange", {
+      action: "modify",
+      data: [this],
+    });
   }
 
   static deleteAnnotationElement(editor) {
@@ -1352,7 +1364,7 @@ class AnnotationEditor {
    * @returns {Object | null}
    */
   serialize(isForCopying = false, context = null) {
-    unreachable("An editor must be serializable");
+    return { data: this.data };
   }
 
   /**
@@ -1369,6 +1381,7 @@ class AnnotationEditor {
       parent,
       id: parent.getNextId(),
       uiManager,
+      data: data.data,
     });
     editor.rotation = data.rotation;
     editor.#accessibilityData = data.accessibilityData;
