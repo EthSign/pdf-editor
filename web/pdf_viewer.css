@@ -18,7 +18,6 @@
 @import url(xfa_layer_builder.css);
 /* Ignored in GECKOVIEW builds: */
 @import url(annotation_editor_layer_builder.css);
-@import url(../node_modules/js-datepicker/dist/datepicker.min.css);
 
 :root {
   --viewer-container-height: 0;
@@ -41,11 +40,9 @@
 [data-main-rotation="90"] {
   transform: rotate(90deg) translateY(-100%);
 }
-
 [data-main-rotation="180"] {
   transform: rotate(180deg) translate(-100%, -100%);
 }
-
 [data-main-rotation="270"] {
   transform: rotate(270deg) translateX(-100%);
 }
@@ -130,7 +127,6 @@
   margin: 0 auto 10px;
   border: none;
 }
-
 /*#endif*/
 
 /*#if COMPONENTS*/
@@ -142,7 +138,6 @@
   margin: 0;
   border: none;
 }
-
 /*#endif*/
 
 .pdfViewer:is(.scrollHorizontal, .scrollWrapped),
@@ -179,7 +174,6 @@
 .pdfViewer.removePageBorders:is(.scrollHorizontal, .scrollWrapped) .page {
   margin-inline: 5px;
 }
-
 /*#endif*/
 
 .pdfViewer .page.loadingIcon::after {

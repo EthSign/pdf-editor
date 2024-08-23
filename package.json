@@ -61,7 +61,8 @@
     "yargs": "^17.7.2"
   },
   "scripts": {
-    "dev": "gulp server:watch",
+    "dev": "gulp server:pdf-editor",
+    "build": "gulp build:pdf-editor",
     "postinstall": "cross-env PUPPETEER_PRODUCT=firefox node node_modules/puppeteer/install.mjs"
   },
   "repository": {
@@ -73,7 +74,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "js-datepicker": "^5.18.2",
     "pdfjs-dist": "file:build/dist"
   }
 }

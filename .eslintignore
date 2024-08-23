@@ -7,6 +7,7 @@ external/builder/fixtures/
 external/builder/fixtures_babel/
 external/quickjs/
 external/openjpeg/
+external/js-datepicker/
 test/tmp/
 test/pdfs/
 web/locale/

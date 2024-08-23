@@ -14,7 +14,7 @@
  */
 
 @import url(pdf_viewer.css);
-
+@import url(../external/js-datepicker/datepicker.min.css);
 
 :root {
   --dir-factor: 1;
@@ -48,7 +48,8 @@
   --toolbar-box-shadow: 0 1px 0 var(--toolbar-border-color);
   --toolbar-border-bottom: none;
   --toolbar-height: 32px;
-  --toolbarSidebar-box-shadow: inset calc(-1px * var(--dir-factor)) 0 0 rgb(0 0 0 / 0.25),
+  --toolbarSidebar-box-shadow: inset calc(-1px * var(--dir-factor)) 0 0
+      rgb(0 0 0 / 0.25),
     0 1px 0 rgb(0 0 0 / 0.15), 0 0 1px rgb(0 0 0 / 0.1);
   --toolbarSidebar-border-bottom: none;
   --button-hover-color: rgb(221 222 223);
@@ -120,7 +121,9 @@
   --secondaryToolbarButton-spreadNone-icon: url(images/secondaryToolbarButton-spreadNone.svg);
   --secondaryToolbarButton-spreadOdd-icon: url(images/secondaryToolbarButton-spreadOdd.svg);
   --secondaryToolbarButton-spreadEven-icon: url(images/secondaryToolbarButton-spreadEven.svg);
-  --secondaryToolbarButton-imageAltTextSettings-icon: var(--toolbarButton-editorStamp-icon);
+  --secondaryToolbarButton-imageAltTextSettings-icon: var(
+    --toolbarButton-editorStamp-icon
+  );
   --secondaryToolbarButton-documentProperties-icon: url(images/secondaryToolbarButton-documentProperties.svg);
   --editorParams-stampAddImage-icon: url(images/toolbarButton-zoomIn.svg);
 }
@@ -259,7 +262,7 @@ body {
   cursor: none;
 }
 
-.pdfPresentationMode.pdfPresentationModeControls>*,
+.pdfPresentationMode.pdfPresentationModeControls > *,
 .pdfPresentationMode.pdfPresentationModeControls .textLayer span {
   cursor: default;
 }
@@ -288,7 +291,6 @@ body {
 #outerContainer:is(.sidebarMoving, .sidebarOpen) #sidebarContainer {
   visibility: visible;
 }
-
 #outerContainer.sidebarOpen #sidebarContainer {
   inset-inline-start: 0;
 }
@@ -314,7 +316,6 @@ body {
   inset: var(--toolbar-height) 0 0;
   outline: none;
 }
-
 #viewerContainer:not(.pdfPresentationMode) {
   transition-duration: var(--sidebar-transition-duration);
   transition-timing-function: var(--sidebar-transition-timing-function);
@@ -333,7 +334,8 @@ body {
   font: message-box;
 }
 
-:is(.toolbar, .editorParamsToolbar, #sidebarContainer) :is(input, button, select) {
+:is(.toolbar, .editorParamsToolbar, #sidebarContainer)
+  :is(input, button, select) {
   outline: none;
   font: message-box;
 }
@@ -366,7 +368,6 @@ body {
   background-color: var(--toolbar-bg-color);
   box-shadow: var(--toolbar-box-shadow);
   border-bottom: var(--toolbar-border-bottom);
-  display: none;
 }
 
 #toolbarViewer {
@@ -410,7 +411,6 @@ body {
   0% {
     transform: translateX(calc(-142px * var(--dir-factor)));
   }
-
   100% {
     transform: translateX(0);
   }
@@ -428,17 +428,20 @@ body {
   inset-inline-start: 0;
   height: 100%;
   width: calc(100% + 150px);
-  background: repeating-linear-gradient(135deg,
-      var(--progressBar-blend-color) 0,
-      var(--progressBar-bg-color) 5px,
-      var(--progressBar-bg-color) 45px,
-      var(--progressBar-color) 55px,
-      var(--progressBar-color) 95px,
-      var(--progressBar-blend-color) 100px);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--progressBar-blend-color) 0,
+    var(--progressBar-bg-color) 5px,
+    var(--progressBar-bg-color) 45px,
+    var(--progressBar-color) 55px,
+    var(--progressBar-color) 95px,
+    var(--progressBar-blend-color) 100px
+  );
   animation: progressIndeterminate 1s linear infinite;
 }
 
-#outerContainer.sidebarResizing :is(#sidebarContainer, #viewerContainer, #loadingBar) {
+#outerContainer.sidebarResizing
+  :is(#sidebarContainer, #viewerContainer, #loadingBar) {
   /* Improve responsiveness and avoid visual glitches when the sidebar is resized. */
   transition-duration: 0s;
 }
@@ -464,7 +467,7 @@ body {
   margin-bottom: -4px;
 }
 
-.editorParamsToolbarContainer>.editorParamsSetter {
+.editorParamsToolbarContainer > .editorParamsSetter {
   min-height: 26px;
   display: flex;
   align-items: center;
@@ -541,7 +544,6 @@ body {
     0 0 0 1px var(--doorhanger-border-color);
   border: var(--doorhanger-border-color-whcm);
 }
-
 :is(.doorHanger, .doorHangerRight)::after,
 :is(.doorHanger, .doorHangerRight)::before {
   bottom: 100%;
@@ -553,29 +555,24 @@ body {
   pointer-events: none;
   opacity: var(--doorhanger-triangle-opacity-whcm);
 }
-
 .doorHanger::after {
   inset-inline-start: 10px;
   margin-inline-start: -8px;
   border-bottom-color: var(--toolbar-bg-color);
 }
-
 .doorHangerRight::after {
   inset-inline-end: 10px;
   margin-inline-end: -8px;
   border-bottom-color: var(--doorhanger-bg-color);
 }
-
 :is(.doorHanger, .doorHangerRight)::before {
   border-bottom-color: var(--doorhanger-border-color);
   border-width: 9px;
 }
-
 .doorHanger::before {
   inset-inline-start: 10px;
   margin-inline-start: -9px;
 }
-
 .doorHangerRight::before {
   inset-inline-end: 10px;
   margin-inline-end: -9px;
@@ -591,15 +588,14 @@ body {
 #toolbarSidebarLeft {
   float: var(--inline-start);
 }
-
 #toolbarViewerRight,
 #toolbarSidebarRight {
   float: var(--inline-end);
 }
 
-#toolbarViewerLeft>*,
-#toolbarViewerMiddle>*,
-#toolbarViewerRight>*,
+#toolbarViewerLeft > *,
+#toolbarViewerMiddle > *,
+#toolbarViewerRight > *,
 #toolbarSidebarLeft *,
 #toolbarSidebarRight * {
   position: relative;
@@ -609,11 +605,9 @@ body {
 #toolbarViewerLeft {
   padding-inline-start: 1px;
 }
-
 #toolbarViewerRight {
   padding-inline-end: 1px;
 }
-
 #toolbarSidebarRight {
   padding-inline-end: 2px;
 }
@@ -622,8 +616,7 @@ body {
   margin: 2px;
   display: inline-block;
 }
-
-.splitToolbarButton>.toolbarButton {
+.splitToolbarButton > .toolbarButton {
   float: var(--inline-start);
 }
 
@@ -640,11 +633,11 @@ body {
   background-color: var(--dialog-button-hover-bg-color);
 }
 
-.dialogButton:is(:hover, :focus-visible)>span {
+.dialogButton:is(:hover, :focus-visible) > span {
   color: var(--dialog-button-hover-color);
 }
 
-.toolbarButton>span {
+.toolbarButton > span {
   display: inline-block;
   width: 0;
   height: 0;
@@ -655,17 +648,15 @@ body {
   opacity: 0.5;
 }
 
-.splitToolbarButton>.toolbarButton:is(:hover, :focus-visible),
+.splitToolbarButton > .toolbarButton:is(:hover, :focus-visible),
 .dropdownToolbarButton:hover {
   background-color: var(--button-hover-color);
 }
-
-.splitToolbarButton>.toolbarButton {
+.splitToolbarButton > .toolbarButton {
   position: relative;
   margin: 0;
 }
-
-#toolbarSidebar .splitToolbarButton>.toolbarButton {
+#toolbarSidebar .splitToolbarButton > .toolbarButton {
   margin-inline-end: 2px;
 }
 
@@ -698,13 +689,13 @@ body {
 }
 
 .toolbarButton.toggled,
-.splitToolbarButton.toggled>.toolbarButton.toggled {
+.splitToolbarButton.toggled > .toolbarButton.toggled {
   background-color: var(--toggled-btn-bg-color);
   color: var(--toggled-btn-color);
 }
 
 .toolbarButton.toggled:hover,
-.splitToolbarButton.toggled>.toolbarButton.toggled:hover {
+.splitToolbarButton.toggled > .toolbarButton.toggled:hover {
   outline: var(--toggled-hover-btn-outline) !important;
 }
 
@@ -713,7 +704,7 @@ body {
 }
 
 .toolbarButton.toggled:hover:active,
-.splitToolbarButton.toggled>.toolbarButton.toggled:hover:active {
+.splitToolbarButton.toggled > .toolbarButton.toggled:hover:active {
   background-color: var(--toggled-hover-active-btn-color);
 }
 
@@ -725,7 +716,6 @@ body {
   background-color: var(--dropdown-btn-bg-color);
   border: var(--dropdown-btn-border);
 }
-
 .dropdownToolbarButton::after {
   top: 6px;
   inset-inline-end: 6px;
@@ -733,7 +723,7 @@ body {
   mask-image: var(--toolbarButton-menuArrow-icon);
 }
 
-.dropdownToolbarButton>select {
+.dropdownToolbarButton > select {
   appearance: none;
   width: inherit;
   min-width: inherit;
@@ -746,13 +736,11 @@ body {
   border: none;
   background-color: var(--dropdown-btn-bg-color);
 }
-
-.dropdownToolbarButton>select:is(:hover, :focus-visible) {
+.dropdownToolbarButton > select:is(:hover, :focus-visible) {
   background-color: var(--button-hover-color);
   color: var(--toggled-btn-color);
 }
-
-.dropdownToolbarButton>select>option {
+.dropdownToolbarButton > select > option {
   background: var(--doorhanger-bg-color);
   color: var(--main-color);
 }
@@ -887,7 +875,6 @@ body {
   height: 22px;
   background-color: var(--separator-color);
 }
-
 .horizontalToolbarSeparator {
   display: block;
   margin: 6px 0;
@@ -919,8 +906,7 @@ body {
 }
 
 #pageNumber {
-  -moz-appearance: textfield;
-  /* hides the spinner in moz */
+  -moz-appearance: textfield; /* hides the spinner in moz */
   text-align: end;
   width: 40px;
   background-size: 0 0;
@@ -930,7 +916,6 @@ body {
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
   }
-
   /*#endif*/
 
   .loadingInput:has(> &.loading)::after {
@@ -960,7 +945,6 @@ body {
   &.start::after {
     inset-inline-start: 4px;
   }
-
   &.end::after {
     inset-inline-end: 4px;
   }
@@ -998,13 +982,12 @@ body {
   overflow: auto;
   user-select: none;
 }
-
 #thumbnailView {
   width: calc(100% - 60px);
   padding: 10px 30px 0;
 }
 
-#thumbnailView>a:is(:active, :focus) {
+#thumbnailView > a:is(:active, :focus) {
   outline: 0;
 }
 
@@ -1023,15 +1006,14 @@ body {
   border-radius: 2px;
 }
 
-#thumbnailView>a:last-of-type>.thumbnail {
+#thumbnailView > a:last-of-type > .thumbnail {
   margin-bottom: 10px;
 }
 
-a:focus>.thumbnail,
+a:focus > .thumbnail,
 .thumbnail:hover {
   border-color: var(--thumbnail-hover-color);
 }
-
 .thumbnail.selected {
   border-color: var(--thumbnail-selected-color) !important;
 }
@@ -1041,28 +1023,26 @@ a:focus>.thumbnail,
   height: var(--thumbnail-height);
   opacity: 0.9;
 }
-
-a:focus>.thumbnail>.thumbnailImage,
-.thumbnail:hover>.thumbnailImage {
+a:focus > .thumbnail > .thumbnailImage,
+.thumbnail:hover > .thumbnailImage {
   opacity: 0.95;
 }
-
-.thumbnail.selected>.thumbnailImage {
+.thumbnail.selected > .thumbnailImage {
   opacity: 1 !important;
 }
 
-.thumbnail:not([data-loaded])>.thumbnailImage {
+.thumbnail:not([data-loaded]) > .thumbnailImage {
   width: calc(var(--thumbnail-width) - 2px);
   height: calc(var(--thumbnail-height) - 2px);
   border: 1px dashed rgb(132 132 132);
 }
 
-.treeWithDeepNesting>.treeItem,
-.treeItem>.treeItems {
+.treeWithDeepNesting > .treeItem,
+.treeItem > .treeItems {
   margin-inline-start: 20px;
 }
 
-.treeItem>a {
+.treeItem > a {
   text-decoration: none;
   display: inline-block;
   /* Subtract the right padding (left, in RTL mode) of the container: */
@@ -1080,15 +1060,13 @@ a:focus>.thumbnail>.thumbnailImage,
   cursor: pointer;
 }
 
-#layersView .treeItem>a * {
+#layersView .treeItem > a * {
   cursor: pointer;
 }
-
-#layersView .treeItem>a>label {
+#layersView .treeItem > a > label {
   padding-inline-start: 4px;
 }
-
-#layersView .treeItem>a>label>input {
+#layersView .treeItem > a > label > input {
   float: var(--inline-start);
   margin-top: 1px;
 }
@@ -1100,30 +1078,27 @@ a:focus>.thumbnail>.thumbnailImage,
   width: 0;
   color: rgb(255 255 255 / 0.5);
 }
-
 .treeItemToggler::before {
   inset-inline-end: 4px;
   mask-image: var(--treeitem-expanded-icon);
 }
-
 .treeItemToggler.treeItemsHidden::before {
   mask-image: var(--treeitem-collapsed-icon);
   transform: scaleX(var(--dir-factor));
 }
-
-.treeItemToggler.treeItemsHidden~.treeItems {
+.treeItemToggler.treeItemsHidden ~ .treeItems {
   display: none;
 }
 
-.treeItem.selected>a {
+.treeItem.selected > a {
   background-color: var(--treeitem-selected-bg-color);
   color: var(--treeitem-selected-color);
 }
 
 .treeItemToggler:hover,
-.treeItemToggler:hover+a,
-.treeItemToggler:hover~.treeItems,
-.treeItem>a:hover {
+.treeItemToggler:hover + a,
+.treeItemToggler:hover ~ .treeItems,
+.treeItem > a:hover {
   background-color: var(--treeitem-bg-color);
   background-clip: padding-box;
   border-radius: 2px;
@@ -1160,16 +1135,15 @@ dialog {
   border-radius: 4px;
   box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
 }
-
 dialog::backdrop {
   background-color: rgb(0 0 0 / 0.2);
 }
 
-dialog>.row {
+dialog > .row {
   display: table-row;
 }
 
-dialog>.row>* {
+dialog > .row > * {
   display: table-cell;
 }
 
@@ -1197,7 +1171,6 @@ dialog :link {
 #passwordDialog {
   text-align: center;
 }
-
 #passwordDialog .toolbarField {
   width: 200px;
 }
@@ -1205,22 +1178,18 @@ dialog :link {
 #documentPropertiesDialog {
   text-align: left;
 }
-
-#documentPropertiesDialog .row>* {
+#documentPropertiesDialog .row > * {
   min-width: 100px;
   text-align: start;
 }
-
-#documentPropertiesDialog .row>span {
+#documentPropertiesDialog .row > span {
   width: 125px;
   word-wrap: break-word;
 }
-
-#documentPropertiesDialog .row>p {
+#documentPropertiesDialog .row > p {
   max-width: 225px;
   word-wrap: break-word;
 }
-
 #documentPropertiesDialog .buttonRow {
   margin-top: 10px;
 }
@@ -1228,24 +1197,21 @@ dialog :link {
 .grab-to-pan-grab {
   cursor: grab !important;
 }
-
-.grab-to-pan-grab *:not(input):not(textarea):not(button):not(select):not(:link) {
+.grab-to-pan-grab
+  *:not(input):not(textarea):not(button):not(select):not(:link) {
   cursor: inherit !important;
 }
-
 .grab-to-pan-grab:active,
 .grab-to-pan-grabbing {
   cursor: grabbing !important;
 }
-
 .grab-to-pan-grabbing {
   position: fixed;
   background: rgb(0 0 0 / 0);
   display: block;
   inset: 0;
   overflow: hidden;
-  z-index: 50000;
-  /* should be higher than anything else in PDF.js! */
+  z-index: 50000; /* should be higher than anything else in PDF.js! */
 }
 
 .toolbarButton {
@@ -1284,7 +1250,7 @@ dialog :link {
       color: var(--doorhanger-hover-color);
     }
 
-    >span {
+    > span {
       display: unset;
       padding-inline-end: 4px;
     }
@@ -1322,7 +1288,6 @@ dialog :link {
     #secondaryOpenFile::before {
       mask-image: var(--toolbarButton-openFile-icon);
     }
-
     /*#endif*/
 
     #secondaryPrint::before {
@@ -1424,7 +1389,7 @@ dialog :link {
     position: relative;
   }
 
-  >div {
+  > div {
     height: var(--toolbar-height);
   }
 
@@ -1437,7 +1402,7 @@ dialog :link {
     &[type="checkbox"] {
       pointer-events: none;
 
-      &:checked+.toolbarLabel {
+      &:checked + .toolbarLabel {
         background-color: var(--toggled-btn-bg-color) !important;
         color: var(--toggled-btn-color);
       }
@@ -1463,7 +1428,6 @@ dialog :link {
       &::-webkit-input-placeholder {
         color: rgb(191 191 191);
       }
-
       /*#endif*/
 
       &::placeholder {
@@ -1510,14 +1474,14 @@ dialog :link {
   }
 
   &.wrapContainers {
-    >div {
+    > div {
       clear: both;
     }
 
-    >#findbarMessageContainer {
+    > #findbarMessageContainer {
       height: auto;
 
-      >* {
+      > * {
         clear: both;
       }
     }
@@ -1542,21 +1506,17 @@ dialog :link {
   body {
     background: rgb(0 0 0 / 0) none;
   }
-
   body[data-pdfjsprinting] #outerContainer {
     display: none;
   }
-
   body[data-pdfjsprinting] #printContainer {
     display: block;
   }
-
   #printContainer {
     height: 100%;
   }
-
   /* wrapper around (scaled) print canvas elements */
-  #printContainer>.printedPage {
+  #printContainer > .printedPage {
     page-break-after: always;
     page-break-inside: avoid;
 
@@ -1570,11 +1530,11 @@ dialog :link {
     align-items: center;
   }
 
-  #printContainer>.xfaPrintedPage .xfaPage {
+  #printContainer > .xfaPrintedPage .xfaPage {
     position: absolute;
   }
 
-  #printContainer>.xfaPrintedPage {
+  #printContainer > .xfaPrintedPage {
     page-break-after: always;
     page-break-inside: avoid;
     width: 100%;
@@ -1582,7 +1542,7 @@ dialog :link {
     position: relative;
   }
 
-  #printContainer>.printedPage :is(canvas, img) {
+  #printContainer > .printedPage :is(canvas, img) {
     /* The intrinsic canvas / image size will make sure that we fit the page. */
     max-width: 100%;
     max-height: 100%;
@@ -1610,7 +1570,6 @@ dialog :link {
   #sidebarContainer {
     background-color: var(--sidebar-narrow-bg-color);
   }
-
   #outerContainer.sidebarOpen #viewerContainer {
     inset-inline-start: 0 !important;
   }
@@ -1620,23 +1579,19 @@ dialog :link {
   :root {
     --editor-toolbar-base-offset: 40px;
   }
-
   #outerContainer .hiddenMediumView {
     display: none !important;
   }
-
   #outerContainer .visibleMediumView {
     display: inherit !important;
   }
 }
 
 @media all and (max-width: 690px) {
-
   .hiddenSmallView,
   .hiddenSmallView * {
     display: none !important;
   }
-
   .toolbarButtonSpacer {
     width: 0;
   }

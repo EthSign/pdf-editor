@@ -1,8 +1,7 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
-import "./App.css";
 import {
-  PDFEditor,
   AnnotationEditorType,
+  PDFEditor,
 } from "./lib/components/PDFEditor/PDFEditor";
 import { usePDFEditorConnector } from "./lib/components/PDFEditor/PDFEditorConnector";
 
@@ -14,7 +13,8 @@ export interface PDFEditor {
 
 function App() {
   const connector = usePDFEditorConnector({
-    viewerUrl: "/web/viewer.html?#locale=en-US",
+    viewerUrl: "/pdf-viewer/web/viewer.html",
+    viewerParams: { disableHistory: true, disableDragOpen: false },
   });
 
   const [annots, setAnnots] = useState<any[]>([
@@ -64,7 +64,7 @@ function App() {
               onClick={async () => {
                 const pdfDoc = await PDFDocument.create();
                 const timesRomanFont = await pdfDoc.embedFont(
-                  StandardFonts.TimesRoman
+                  StandardFonts.TimesRoman,
                 );
 
                 const page = pdfDoc.addPage();
@@ -102,19 +102,19 @@ function App() {
 
             <button
               draggable
-              onDragStart={event => {
+              onDragStart={(event) => {
                 event.dataTransfer.setData(
                   "data",
                   JSON.stringify({
                     bitmapFile: img,
                     mode: AnnotationEditorType.FREETEXT,
-                  })
+                  }),
                 );
               }}
               onClick={() => {
                 if (!connector) return;
                 connector.setAnnotationEditorType(
-                  AnnotationEditorType.FREETEXT
+                  AnnotationEditorType.FREETEXT,
                 );
               }}
             >
@@ -122,12 +122,12 @@ function App() {
             </button>
             <button
               draggable
-              onDragStart={event => {
+              onDragStart={(event) => {
                 event.dataTransfer.setData(
                   "data",
                   JSON.stringify({
                     mode: AnnotationEditorType.DATE,
-                  })
+                  }),
                 );
               }}
               onClick={() => {
@@ -139,13 +139,13 @@ function App() {
             </button>
             <button
               draggable
-              onDragStart={event => {
+              onDragStart={(event) => {
                 event.dataTransfer.setData(
                   "data",
                   JSON.stringify({
                     bitmapFile: img,
                     mode: AnnotationEditorType.STAMP,
-                  })
+                  }),
                 );
               }}
               onClick={() => {

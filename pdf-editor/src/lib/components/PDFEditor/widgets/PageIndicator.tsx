@@ -43,7 +43,7 @@ export const PageIndicator: React.FC = () => {
           <input
             type="text"
             value={currentPageInput}
-            onChange={e => {
+            onChange={(e) => {
               const input = e.target.value;
               if (!/^\d*$/.test(input)) return;
 
@@ -52,7 +52,7 @@ export const PageIndicator: React.FC = () => {
 
               setCurrentPageInput(page);
             }}
-            onKeyDown={e => {
+            onKeyDown={(e) => {
               if (e.key === "Enter") {
                 viewerApp.pdfViewer.currentPageNumber = currentPageInput;
               }

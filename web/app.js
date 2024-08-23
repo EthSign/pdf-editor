@@ -182,6 +182,7 @@ const PDFViewerApplication = {
   _isCtrlKeyDown: false,
   _caretBrowsing: null,
   _isScrolling: false,
+  _onKeydown: onKeyDown.bind(this),
 
   // Called once when the document is loaded.
   async initialize(appConfig) {
@@ -344,6 +345,7 @@ const PDFViewerApplication = {
       disableRange: x => x === "true",
       disableStream: x => x === "true",
       verbosity: x => x | 0,
+      disableDragOpen: x => x === "true",
     };
 
     // Set some specific preferences for tests.
@@ -706,29 +708,31 @@ const PDFViewerApplication = {
         });
       });
 
-      // Enable dragging-and-dropping a new PDF file onto the viewerContainer.
-      appConfig.mainContainer.addEventListener("dragover", function (evt) {
-        for (const item of evt.dataTransfer.items) {
-          if (item.type === "application/pdf") {
-            evt.dataTransfer.dropEffect =
-              evt.dataTransfer.effectAllowed === "copy" ? "copy" : "move";
-            evt.preventDefault();
-            evt.stopPropagation();
+      if (AppOptions.get("disableDragOpen") !== true) {
+        // Enable dragging-and-dropping a new PDF file onto the viewerContainer.
+        appConfig.mainContainer.addEventListener("dragover", function (evt) {
+          for (const item of evt.dataTransfer.items) {
+            if (item.type === "application/pdf") {
+              evt.dataTransfer.dropEffect =
+                evt.dataTransfer.effectAllowed === "copy" ? "copy" : "move";
+              evt.preventDefault();
+              evt.stopPropagation();
+              return;
+            }
+          }
+        });
+        appConfig.mainContainer.addEventListener("drop", function (evt) {
+          if (evt.dataTransfer.files?.[0]?.type !== "application/pdf") {
             return;
           }
-        }
-      });
-      appConfig.mainContainer.addEventListener("drop", function (evt) {
-        if (evt.dataTransfer.files?.[0]?.type !== "application/pdf") {
-          return;
-        }
-        evt.preventDefault();
-        evt.stopPropagation();
-        eventBus.dispatch("fileinputchange", {
-          source: this,
-          fileInput: evt.dataTransfer,
+          evt.preventDefault();
+          evt.stopPropagation();
+          eventBus.dispatch("fileinputchange", {
+            source: this,
+            fileInput: evt.dataTransfer,
+          });
         });
-      });
+      }
     }
 
     if (!AppOptions.get("supportsDocumentFonts")) {
@@ -2034,7 +2038,7 @@ const PDFViewerApplication = {
       signal,
     });
     window.addEventListener("click", onClick.bind(this), { signal });
-    window.addEventListener("keydown", onKeyDown.bind(this), { signal });
+    window.addEventListener("keydown", this._onKeydown, { signal });
     window.addEventListener("keyup", onKeyUp.bind(this), { signal });
     window.addEventListener(
       "resize",

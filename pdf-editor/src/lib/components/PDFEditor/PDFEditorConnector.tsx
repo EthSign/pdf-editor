@@ -2,9 +2,10 @@ import { PDFDocument } from "pdf-lib";
 import { useRef } from "react";
 import { createRoot } from "react-dom/client";
 import cssPatch from "./patch.css?inline";
-import { AnnotationEditorType, PDFViewerApp } from "./types";
+import { AnnotationEditorType, PDFViewerApp, PDFViewerParams } from "./types";
 import { getViewerInstance } from "./utils";
 import { WidgetRoot } from "./widgets/WidgetRoot";
+
 export class PDFEditorConnector {
   viewerUrl: string;
 
@@ -14,13 +15,33 @@ export class PDFEditorConnector {
 
   app: PDFViewerApp;
 
-  constructor(params: { viewerUrl: string }) {
-    this.viewerUrl = params.viewerUrl;
+  constructor(params: { viewerUrl: string; viewerParams?: PDFViewerParams }) {
+    const { viewerUrl, viewerParams } = params;
+
+    const defaultParams: PDFViewerParams = {
+      locale: "en_US",
+      disableHistory: true,
+      disableDragOpen: true,
+    };
+
+    const [path, search] = viewerUrl.split("#");
+
+    const searchParams = new URLSearchParams(search);
+
+    Object.entries(Object.assign(defaultParams, viewerParams))
+      .filter(([, value]) => value !== undefined)
+      .forEach(([key, value]) => {
+        searchParams.set(key, value!.toString());
+      });
+
+    const url = [path, searchParams.toString()].join("#");
+
+    this.viewerUrl = url;
   }
 
   setAnnotationEditorType(
     type: AnnotationEditorType,
-    data?: { bitmapFile: string }
+    data?: { bitmapFile: string },
   ) {
     this.app.pdfViewer.annotationEditorUIManager.annotationTempData = {
       mode: type,
@@ -92,11 +113,11 @@ export class PDFEditorConnector {
     const rootEl = contentWindow.document.createElement("div");
 
     const mainContainerEl = contentWindow.document.getElementById(
-      "mainContainer"
+      "mainContainer",
     ) as HTMLDivElement;
 
     const sidebarContentEl = contentWindow.document.getElementById(
-      "sidebarContent"
+      "sidebarContent",
     ) as HTMLDivElement;
 
     const widgetRoot = createRoot(rootEl!);
@@ -106,26 +127,22 @@ export class PDFEditorConnector {
         connector={this}
         mainSlot={mainContainerEl}
         sidebarSlot={sidebarContentEl}
-      />
+      />,
     );
 
     contentWindow.document.body.appendChild(rootEl!);
 
     // TODO: 禁用 cmd + s 等用不到的快捷键
-
-    // TODO: 禁用本地状态存储 history storage
-
-    // TODO: 禁用 pdf 文件拖入自动打开
   }
 
   disconnect() {}
 }
 
 export const usePDFEditorConnector = (
-  params: ConstructorParameters<typeof PDFEditorConnector>["0"]
+  params: ConstructorParameters<typeof PDFEditorConnector>["0"],
 ) => {
   const connectorRef = useRef<PDFEditorConnector>(
-    new PDFEditorConnector(params)
+    new PDFEditorConnector(params),
   );
 
   return connectorRef.current;

@@ -2432,8 +2432,37 @@ gulp.task("externaltest", function (done) {
 });
 
 gulp.task(
-  "server:watch",
-  gulp.series("generic", () =>
-    gulp.watch(["src/**/*", "web/*"], gulp.series("generic"))
-  )
+  "server:pdf-editor",
+  gulp.parallel("server", done => {
+    const process = spawn("pnpm", ["run", "dev"], {
+      cwd: path.join(__dirname, "pdf-editor"),
+      stdio: "inherit",
+    });
+
+    // 监听进程的关闭事件
+    process.on("close", code => {
+      console.log(`Process exited with code ${code}`);
+    });
+
+    // 错误处理
+    process.on("error", err => {
+      console.error("Failed to start process:", err);
+    });
+
+    done();
+  })
+);
+
+gulp.task(
+  "build:pdf-editor",
+  gulp.series("generic", done => {
+    exec("cd pdf-editor && pnpm run build", (err, stdout, stderr) => {
+      if (err) {
+        console.error(stderr);
+      }
+
+      console.log(stdout);
+      done();
+    });
+  })
 );

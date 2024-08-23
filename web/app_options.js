@@ -73,6 +73,12 @@ const Type = {
  *       primitive types and cannot rely on any imported types.
  */
 const defaultOptions = {
+  disableDragOpen: {
+    /** @type {boolean} */
+    value: false,
+    kind: OptionKind.VIEWER,
+  },
+
   allowedGlobalEvents: {
     /** @type {Object} */
     value: null,
