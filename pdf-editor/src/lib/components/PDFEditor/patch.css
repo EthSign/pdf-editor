@@ -1,5 +1,3 @@
-@import url(../node_modules/js-datepicker/dist/datepicker.min.css);
-
 /* patch variables */
 :root {
   --outline-color: #fdb022;

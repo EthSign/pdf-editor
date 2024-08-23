@@ -6,6 +6,15 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    proxy: {
+      '/pdf-viewer': {
+        target: 'http://localhost:8888',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/pdf-viewer/, ''),
+      }
+    }
+  },
   plugins: [
     react(),
     dts({

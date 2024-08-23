@@ -30,7 +30,7 @@ import {
   KeyboardManager,
 } from "./tools.js";
 import { AnnotationEditor } from "./editor.js";
-import datepicker from "js-datepicker";
+import datepicker from "../../../external/js-datepicker/datepicker.js";
 import { FreeTextAnnotationElement } from "../annotation_layer.js";
 
 const EOL_PATTERN = /\r\n?|\n/g;
