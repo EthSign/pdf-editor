@@ -8,7 +8,9 @@ export const PDFEditor: React.FC<PDFEditorProps> = (props) => {
   const [editorReady, setEditorReady] = useState(false);
 
   useEffect(() => {
-    connector.disconnect();
+    return () => {
+      connector.disconnect();
+    };
   }, []);
 
   return (

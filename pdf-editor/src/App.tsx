@@ -13,7 +13,8 @@ export interface PDFEditor {
 
 function App() {
   const connector = usePDFEditorConnector({
-    viewerUrl: "/pdf-viewer/web/viewer.html?#locale=en-US",
+    viewerUrl: "/pdf-viewer/web/viewer.html",
+    viewerParams: { disableHistory: true },
   });
 
   const [annots, setAnnots] = useState<any[]>([

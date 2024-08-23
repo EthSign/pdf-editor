@@ -2,7 +2,7 @@ import { PDFDocument } from "pdf-lib";
 import { useRef } from "react";
 import { createRoot } from "react-dom/client";
 import cssPatch from "./patch.css?inline";
-import { AnnotationEditorType, PDFViewerApp } from "./types";
+import { AnnotationEditorType, PDFViewerApp, PDFViewerParams } from "./types";
 import { getViewerInstance } from "./utils";
 import { WidgetRoot } from "./widgets/WidgetRoot";
 
@@ -13,8 +13,27 @@ export class PDFEditorConnector {
 
   app: PDFViewerApp;
 
-  constructor(params: { viewerUrl: string }) {
-    this.viewerUrl = params.viewerUrl;
+  constructor(params: { viewerUrl: string; viewerParams?: PDFViewerParams }) {
+    const { viewerUrl, viewerParams } = params;
+
+    const defaultParams: typeof viewerParams = {
+      locale: "en_US",
+      disableHistory: true,
+    };
+
+    const [path, search] = viewerUrl.split("#");
+
+    const searchParams = new URLSearchParams(search);
+
+    Object.entries(Object.assign(defaultParams, viewerParams))
+      .filter(([, value]) => value !== undefined)
+      .forEach(([key, value]) => {
+        searchParams.set(key, value!.toString());
+      });
+
+    const url = [path, searchParams.toString()].join("#");
+
+    this.viewerUrl = url;
   }
 
   setAnnotationEditorType(
@@ -100,8 +119,6 @@ export class PDFEditorConnector {
     contentWindow.document.body.appendChild(rootEl!);
 
     // TODO: 禁用 cmd + s 等用不到的快捷键
-
-    // TODO: 禁用本地状态存储 history storage
 
     // TODO: 禁用 pdf 文件拖入自动打开
   }
