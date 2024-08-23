@@ -16,6 +16,7 @@ export enum AnnotationEditorType {
   STAMP = 13,
 }
 export interface PDFViewerParams {
+  // 原版 pdf.js viewer 参数
   disableworker?: boolean;
   textLayer?: "off" | "visible" | "shadow" | "hover";
   locale?: string;
@@ -32,5 +33,10 @@ export interface PDFViewerParams {
   maxCanvasPixels?: number;
   spreadModeOnLoad?: number;
   supportsCaretBrowsingMode?: boolean;
+
+
+  // 扩展参数
+  disableDragOpen?: boolean
+
   [index: string]: string | number | boolean | undefined;
 }

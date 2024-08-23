@@ -16,9 +16,10 @@ export class PDFEditorConnector {
   constructor(params: { viewerUrl: string; viewerParams?: PDFViewerParams }) {
     const { viewerUrl, viewerParams } = params;
 
-    const defaultParams: typeof viewerParams = {
+    const defaultParams: PDFViewerParams = {
       locale: "en_US",
       disableHistory: true,
+      disableDragOpen: true,
     };
 
     const [path, search] = viewerUrl.split("#");
@@ -119,8 +120,6 @@ export class PDFEditorConnector {
     contentWindow.document.body.appendChild(rootEl!);
 
     // TODO: 禁用 cmd + s 等用不到的快捷键
-
-    // TODO: 禁用 pdf 文件拖入自动打开
   }
 
   disconnect() {}

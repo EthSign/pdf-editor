@@ -14,7 +14,7 @@ export interface PDFEditor {
 function App() {
   const connector = usePDFEditorConnector({
     viewerUrl: "/pdf-viewer/web/viewer.html",
-    viewerParams: { disableHistory: true },
+    viewerParams: { disableHistory: true, disableDragOpen: false },
   });
 
   const [annots, setAnnots] = useState<any[]>([
