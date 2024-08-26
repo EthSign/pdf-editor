@@ -1,4 +1,4 @@
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, setTextRenderingMode } from "pdf-lib";
 import { useRef } from "react";
 import { createRoot } from "react-dom/client";
 import cssPatch from "./patch.css?inline";
@@ -15,14 +15,25 @@ export class PDFEditorConnector {
 
   app: PDFViewerApp;
 
-  constructor(params: { viewerUrl: string; viewerParams?: PDFViewerParams }) {
-    const { viewerUrl, viewerParams } = params;
+  mobileMode: boolean = false;
+
+  constructor(params: {
+    viewerUrl: string;
+    viewerParams?: PDFViewerParams;
+    mobileMode?: boolean;
+  }) {
+    const { viewerUrl, viewerParams, mobileMode } = params;
 
     const defaultParams: PDFViewerParams = {
       locale: "en_US",
       disableHistory: true,
       disableDragOpen: true,
     };
+
+    if (mobileMode) {
+      this.mobileMode = true;
+      defaultParams.textLayer = "off";
+    }
 
     const [path, search] = viewerUrl.split("#");
 
@@ -102,12 +113,21 @@ export class PDFEditorConnector {
     this.eventBus = PDFViewerApplication.eventBus;
 
     /* ------------------------- reset default UI state ------------------------- */
-    PDFViewerApplication.pdfSidebar.open();
+    if (!this.mobileMode) {
+      PDFViewerApplication.pdfSidebar.open();
+    }
 
     /* ------------------------------- patch style ------------------------------ */
     const style = contentWindow.document.createElement("style");
     style.innerText = cssPatch;
     contentWindow.document.head.appendChild(style);
+    if (this.mobileMode) {
+      const outerContainerEl =
+        contentWindow.document.querySelector("#outerContainer");
+      if (outerContainerEl) {
+        outerContainerEl.classList.add("mobileMode");
+      }
+    }
 
     /* ---------------------------- mount WidgetRoot ---------------------------- */
     const rootEl = contentWindow.document.createElement("div");

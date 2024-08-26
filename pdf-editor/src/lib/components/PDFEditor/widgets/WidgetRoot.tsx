@@ -13,6 +13,8 @@ export const WidgetRoot: React.FC<{
 }> = (props) => {
   const { connector, mainSlot, sidebarSlot } = props;
 
+  if (connector.mobileMode) return null;
+
   return (
     <WidgetContext.Provider value={{ connector }}>
       <div>
