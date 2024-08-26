@@ -132,7 +132,64 @@ export class PDFEditorConnector {
 
     contentWindow.document.body.appendChild(rootEl!);
 
-    // TODO: 禁用 cmd + s 等用不到的快捷键
+    /* ----------------------------- patch shortcuts ---------------------------- */
+    PDFViewerApplication._keydownInterceptor = (
+      evt: KeyboardEvent,
+      next: () => void,
+    ) => {
+      const keyCodeMap: Record<string, number> = {
+        f: 70,
+        s: 83,
+        o: 79,
+        r: 82,
+        h: 72,
+        F4: 115,
+      };
+
+      const modifierValue =
+        (evt.ctrlKey ? 1 : 0) |
+        (evt.altKey ? 2 : 0) |
+        (evt.shiftKey ? 4 : 0) |
+        (evt.metaKey ? 8 : 0);
+
+      const disabledShortcut = [
+        // ctrl or cmd
+        [1, "f"], // find
+        [8, "f"], // find
+        [1, "s"], // download
+        [8, "s"], // download
+        [1, "o"], // open file
+        [8, "o"], // open file
+
+        // ctrl + alt or cmd + option
+        [3, "g"], // focus input#pageNumber field
+        [10, "g"], // focus input#pageNumber field
+
+        // no modifier
+        [0, "s"], // switch select tool
+        [0, "h"], // switch hand tool
+        [0, "r"], // rotate
+        [0, "F4"], // toggle sidebar
+      ];
+
+      const isDisabledShortcut = disabledShortcut.some((shortcut) => {
+        const [modifier, key] = shortcut;
+
+        const keyCode = keyCodeMap[key];
+
+        if (!modifier && keyCode === evt.keyCode) return true;
+
+        if (modifier === modifierValue && keyCode === evt.keyCode) return true;
+
+        return false;
+      });
+
+      if (isDisabledShortcut) {
+        return;
+      }
+
+      next();
+    };
   }
 
   disconnect() {}
