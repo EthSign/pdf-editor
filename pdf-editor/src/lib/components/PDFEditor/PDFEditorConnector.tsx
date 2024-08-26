@@ -177,9 +177,13 @@ export class PDFEditorConnector {
 
         const keyCode = keyCodeMap[key];
 
-        if (!modifier && keyCode === evt.keyCode) return true;
+        if (!modifier && !modifierValue && keyCode === evt.keyCode) {
+          return true;
+        }
 
-        if (modifier === modifierValue && keyCode === evt.keyCode) return true;
+        if (modifier === modifierValue && keyCode === evt.keyCode) {
+          return true;
+        }
 
         return false;
       });
