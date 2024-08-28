@@ -225,7 +225,7 @@ function App() {
                 const pdfBytes = await convertAnnotationsToContent({
                   annotations,
                   pdf: pdfData,
-                  font: "/fonts/Noto_Sans_SC/static/NotoSansSuC-Regular.ttf",
+                  font: "/fonts/Noto_Sans_SC/static/NotoSansSC-Regular.ttf",
                 });
 
                 const url = pdfBytesToUrl(pdfBytes);
