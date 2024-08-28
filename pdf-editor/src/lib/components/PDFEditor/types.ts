@@ -35,9 +35,10 @@ export interface PDFViewerParams {
   spreadModeOnLoad?: number;
   supportsCaretBrowsingMode?: boolean;
 
-
   // 扩展参数
-  disableDragOpen?: boolean
+  disableDragOpen?: boolean;
 
   [index: string]: string | number | boolean | undefined;
 }
+
+export type Annotation = any;

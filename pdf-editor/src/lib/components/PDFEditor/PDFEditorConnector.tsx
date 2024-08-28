@@ -1,9 +1,14 @@
-import { PDFDocument, setTextRenderingMode } from "pdf-lib";
+import { PDFDocument } from "pdf-lib";
 import { useRef } from "react";
 import { createRoot } from "react-dom/client";
 import cssPatch from "./patch.css?inline";
-import { AnnotationEditorType, PDFViewerApp, PDFViewerParams } from "./types";
-import { getViewerInstance } from "./utils";
+import {
+  Annotation,
+  AnnotationEditorType,
+  PDFViewerApp,
+  PDFViewerParams,
+} from "./types";
+import { getViewerInstance } from "./utils/misc";
 import { WidgetRoot } from "./widgets/WidgetRoot";
 
 export class PDFEditorConnector {
@@ -16,6 +21,10 @@ export class PDFEditorConnector {
   app: PDFViewerApp;
 
   mobileMode: boolean = false;
+
+  get filename() {
+    return this.app?._docFilename;
+  }
 
   constructor(params: {
     viewerUrl: string;
@@ -60,7 +69,7 @@ export class PDFEditorConnector {
     };
   }
 
-  getAllAnnotations() {
+  getAllAnnotations(): Annotation[] {
     const data = [];
     for (const editor of this.app.pdfViewer.annotationEditorUIManager.allEditors.values()) {
       const serialized = editor.serialize(false, true);
@@ -219,6 +228,14 @@ export class PDFEditorConnector {
   }
 
   disconnect() {}
+
+  async getPdfData(): Promise<ArrayBuffer | null> {
+    const data = await this.app?.pdfDocument?.getData?.();
+    if (!data) return null;
+
+    const blob = new Blob([data], { type: "application/pdf" });
+    return blob.arrayBuffer();
+  }
 }
 
 export const usePDFEditorConnector = (

@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { IconClose, IconLeft, IconRight, IconSearch } from "../icons";
-import { debounce, EventHelper } from "../utils";
+import { debounce, EventHelper } from "../utils/misc";
 import { useWidgetContext } from "./WidgetContext";
 
 interface HighlightProps {
