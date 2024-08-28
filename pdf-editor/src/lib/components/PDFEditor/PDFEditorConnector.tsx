@@ -109,6 +109,8 @@ export class PDFEditorConnector {
     this.iframeWindow = contentWindow;
 
     const { PDFViewerApplication } = getViewerInstance(pdfViewerIframe);
+    await PDFViewerApplication.initializedPromise;
+
     this.app = PDFViewerApplication;
     this.eventBus = PDFViewerApplication.eventBus;
 
