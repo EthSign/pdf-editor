@@ -676,7 +676,7 @@ class AnnotationEditorLayer {
    */
   createAndAddNewEditor(event, isCentered, data = {}) {
     const id = this.getNextId();
-    if (data.mode) {
+    if (data.mode !== undefined) {
       this.#uiManager.updateMode(data.mode);
     }
     const editor = this.#createNewEditor({
@@ -690,11 +690,11 @@ class AnnotationEditorLayer {
     });
     if (editor) {
       this.add(editor);
+      this.#uiManager._eventBus.dispatch("annotationEditorChange", {
+        action: "add",
+        data: [editor],
+      });
     }
-    this.#uiManager._eventBus.dispatch("annotationEditorChange", {
-      action: "add",
-      data: [editor],
-    });
 
     return editor;
   }
@@ -878,13 +878,13 @@ class AnnotationEditorLayer {
     // When we're cleaning up, some editors are removed but we don't want
     // to add a new one which will induce an addition in this.#editors, hence
     // an infinite loop.
-    this.#isCleaningUp = true;
-    for (const editor of this.#editors.values()) {
-      if (editor.isEmpty()) {
-        editor.remove();
-      }
-    }
-    this.#isCleaningUp = false;
+    // this.#isCleaningUp = true;
+    // for (const editor of this.#editors.values()) {
+    //   if (editor.isEmpty()) {
+    //     editor.remove();
+    //   }
+    // }
+    // this.#isCleaningUp = false;
   }
 
   /**

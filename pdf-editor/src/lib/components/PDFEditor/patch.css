@@ -1,7 +1,7 @@
 /* patch variables */
 :root {
   --outline-color: #fdb022;
-
+  --hover-outline-color: #fdb022;
   --toolbar-height: 0;
   --body-bg-color: #f1f3f5;
 

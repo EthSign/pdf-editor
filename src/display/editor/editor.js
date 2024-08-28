@@ -50,6 +50,8 @@ class AnnotationEditor {
 
   #keepAspectRatio = false;
 
+  #resizers = null;
+
   #resizersDiv = null;
 
   #savedDimensions = null;
@@ -88,11 +90,21 @@ class AnnotationEditor {
 
   _l10nPromise = null;
 
-  #isDraggable = false;
+  #isDraggable = true;
 
   #zIndex = AnnotationEditor._zIndex++;
 
+  #isResizable = null;
+
   #data = {};
+
+  noAutoFocus = false;
+
+  editable = true;
+
+  resizable = true;
+
+  isDraggable = true;
 
   static _borderLineWidth = -1;
 
@@ -162,9 +174,14 @@ class AnnotationEditor {
     this._willKeepAspectRatio = false;
     this._initialOptions.isCentered = parameters.isCentered;
     this._structTreeParentId = null;
-    this.isCanMove = parameters.isCanMove;
     this.#data = parameters.data;
-
+    this.#resizers = parameters.resizers;
+    this.noAutoFocus = parameters.noAutoFocus;
+    this.#isResizable = parameters.isResizable || null;
+    this.editable =
+      parameters.editable === undefined ? true : parameters.editable;
+    this.isDraggable =
+      parameters.isDraggable === undefined ? true : parameters.isDraggable;
     const {
       rotation,
       rawDims: { pageWidth, pageHeight, pageX, pageY },
@@ -314,7 +331,7 @@ class AnnotationEditor {
   }
 
   get _isDraggable() {
-    return this.#isDraggable && this._uiManager.isDraggable;
+    return this.#isDraggable && this.editable && this.isDraggable;
   }
 
   set _isDraggable(value) {
@@ -739,18 +756,20 @@ class AnnotationEditor {
     // When the resizers are used with the keyboard, they're focusable, hence
     // we want to have them in this order (top left, top middle, top right, ...)
     // in the DOM to have the focus order correct.
-    const classes = this._willKeepAspectRatio
-      ? ["topLeft", "topRight", "bottomRight", "bottomLeft"]
-      : [
-          "topLeft",
-          "topMiddle",
-          "topRight",
-          "middleRight",
-          "bottomRight",
-          "bottomMiddle",
-          "bottomLeft",
-          "middleLeft",
-        ];
+    const classes =
+      this.#resizers ||
+      (this._willKeepAspectRatio
+        ? ["topLeft", "topRight", "bottomRight", "bottomLeft"]
+        : [
+            "topLeft",
+            "topMiddle",
+            "topRight",
+            "middleRight",
+            "bottomRight",
+            "bottomMiddle",
+            "bottomLeft",
+            "middleLeft",
+          ]);
     const signal = this._uiManager._signal;
     for (const name of classes) {
       const div = document.createElement("div");
@@ -858,6 +877,7 @@ class AnnotationEditor {
     const savedY = this.y;
     const savedWidth = this.width;
     const savedHeight = this.height;
+
     const minWidth = AnnotationEditor.MIN_SIZE / parentWidth;
     const minHeight = AnnotationEditor.MIN_SIZE / parentHeight;
 
@@ -948,8 +968,8 @@ class AnnotationEditor {
           1 / savedHeight
         ),
         // Avoid the editor to be smaller than the minimum size.
-        minWidth / savedWidth,
-        minHeight / savedHeight
+        minWidth / savedWidth > 1 ? 1 : minWidth / savedWidth,
+        minHeight / savedHeight > 1 ? 1 : minHeight / savedHeight
       );
     } else if (isHorizontal) {
       ratioX =
@@ -966,7 +986,9 @@ class AnnotationEditor {
     }
 
     const newWidth = round(savedWidth * ratioX);
+
     const newHeight = round(savedHeight * ratioY);
+
     transfOppositePoint = transf(...getOpposite(newWidth, newHeight));
     const newX = oppositeX - transfOppositePoint[0];
     const newY = oppositeY - transfOppositePoint[1];
@@ -1364,7 +1386,9 @@ class AnnotationEditor {
    * @returns {Object | null}
    */
   serialize(isForCopying = false, context = null) {
-    return { data: this.data };
+    return {
+      data: this.data ? JSON.parse(JSON.stringify(this.data)) : undefined,
+    };
   }
 
   /**
@@ -1381,7 +1405,7 @@ class AnnotationEditor {
       parent,
       id: parent.getNextId(),
       uiManager,
-      data: data.data,
+      ...data,
     });
     editor.rotation = data.rotation;
     editor.#accessibilityData = data.accessibilityData;
@@ -1448,7 +1472,14 @@ class AnnotationEditor {
    * @returns {boolean} true if this editor can be resized.
    */
   get isResizable() {
-    return false;
+    return this.#isResizable && this.editable;
+  }
+
+  set isResizable(val) {
+    if (typeof val !== "boolean") {
+      return;
+    }
+    this.#isResizable = !!val;
   }
 
   /**
@@ -1606,7 +1637,7 @@ class AnnotationEditor {
   select() {
     this.makeResizable();
     this.div?.classList.add("selectedEditor");
-    if (!this._editToolbar) {
+    if (!this._editToolbar && this.editable) {
       this.addEditToolbar().then(() => {
         if (this.div?.classList.contains("selectedEditor")) {
           // The editor can have been unselected while we were waiting for the
@@ -1617,8 +1648,10 @@ class AnnotationEditor {
       });
       return;
     }
-    this._editToolbar?.show();
-    this.#altText?.toggleAltTextBadge(false);
+    if (this.editable) {
+      this._editToolbar?.show();
+      this.#altText?.toggleAltTextBadge(false);
+    }
   }
 
   /**
@@ -1636,6 +1669,10 @@ class AnnotationEditor {
     }
     this._editToolbar?.hide();
     this.#altText?.toggleAltTextBadge(true);
+    this._uiManager._eventBus.dispatch("annotationEditorSelected", {
+      action: "unSelected",
+      data: this,
+    });
   }
 
   /**

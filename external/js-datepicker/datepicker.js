@@ -1441,7 +1441,8 @@ function oneHandler(e) {
   if (type === "click") {
     // Anywhere other than the calendar - close the calendar.
     if (!instance) {
-      return datepickers.forEach(hideCal);
+      //return datepickers.forEach(hideCal);
+      return
     }
 
     // Do nothing for disabled calendars.
@@ -1556,7 +1557,7 @@ function oneHandler(e) {
     hideOtherPickers(instance);
   } else if (type === "keydown" && keyCode === 9 && instance) {
     // Hide this instance on tab out.
-    hideCal(instance);
+   // hideCal(instance);
   } else if (type === "keydown" && instance && !instance.disabled) {
     const overlay = instance.calendar.querySelector(".qs-overlay");
     const overlayShowing = !overlay.classList.contains("qs-hidden");

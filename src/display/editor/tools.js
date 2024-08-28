@@ -627,8 +627,6 @@ class AnnotationEditorUIManager {
 
   #annotationTempData = null;
 
-  #isDraggable = true;
-
   tempAnnotationData = {};
 
   static TRANSLATE_SMALL = 1; // page units.
@@ -864,14 +862,6 @@ class AnnotationEditorUIManager {
 
   set annotationTempData(data) {
     this.#annotationTempData = data;
-  }
-
-  get isDraggable() {
-    return this.#isDraggable;
-  }
-
-  set isDraggable(value) {
-    this.#isDraggable = value;
   }
 
   get mlManager() {
@@ -1466,23 +1456,15 @@ class AnnotationEditorUIManager {
         newEditors.push(deserializedEditor);
       }
 
-      const cmd = () => {
-        for (const editor of newEditors) {
-          this.#addEditorToLayer(editor);
-        }
-        if (newEditors.length > 0) {
-          this.eventBus.dispatch("annotationEditorChange", {
-            action: "add",
-            data: newEditors,
-          });
-        }
-      };
-      const undo = () => {
-        for (const editor of newEditors) {
-          editor.remove();
-        }
-      };
-      this.addCommands({ cmd, undo, mustExec: true });
+      for (const editor of newEditors) {
+        this.#addEditorToLayer(editor);
+      }
+      if (newEditors.length > 0) {
+        this._eventBus.dispatch("annotationEditorChange", {
+          action: "add",
+          data: newEditors,
+        });
+      }
     } catch (ex) {
       warn(`paste: "${ex.message}".`);
     }
@@ -1874,7 +1856,7 @@ class AnnotationEditorUIManager {
     }
     this._eventBus.dispatch("annotationEditorChange", {
       action: "delete",
-      data: this,
+      data: editor,
     });
   }
 
@@ -2028,10 +2010,6 @@ class AnnotationEditorUIManager {
     this.#dispatchUpdateStates({
       hasSelectedEditor: this.hasSelection,
     });
-    this._eventBus.dispatch("annotationEditorSelected", {
-      action: "unSelected",
-      data: editor,
-    });
   }
 
   get hasSelection() {
@@ -2108,12 +2086,16 @@ class AnnotationEditorUIManager {
     const editors = [...this.#selectedEditors];
     const cmd = () => {
       for (const editor of editors) {
-        editor.remove();
+        if (editor.editable) {
+          editor.remove();
+        }
       }
     };
     const undo = () => {
       for (const editor of editors) {
-        this.#addEditorToLayer(editor);
+        if (editor.editable) {
+          this.#addEditorToLayer(editor);
+        }
       }
     };
 

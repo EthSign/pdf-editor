@@ -350,7 +350,7 @@ class FreeTextEditor extends AnnotationEditor {
 
   /** @inheritdoc */
   enableEditMode() {
-    if (this.isInEditMode()) {
+    if (this.isInEditMode() || !this.editable) {
       return;
     }
 
@@ -408,9 +408,11 @@ class FreeTextEditor extends AnnotationEditor {
 
     // On Chrome, the focus is given to <body> when contentEditable is set to
     // false, hence we focus the div.
-    this.div.focus({
-      preventScroll: true /* See issue #15744 */,
-    });
+    if (this.isDraggable) {
+      this.div.focus({
+        preventScroll: true /* See issue #15744 */,
+      });
+    }
 
     // In case the blur callback hasn't been called.
     this.isEditing = false;
@@ -435,7 +437,9 @@ class FreeTextEditor extends AnnotationEditor {
       return;
     }
     this.enableEditMode();
-    this.editorDiv.focus();
+    if (!this.noAutoFocus) {
+      this.editorDiv.focus();
+    }
     if (this._initialOptions?.isCentered) {
       this.center();
     }
@@ -520,6 +524,10 @@ class FreeTextEditor extends AnnotationEditor {
     if (savedText === newText) {
       return;
     }
+    this._uiManager._eventBus.dispatch("annotationEditorChange", {
+      action: "modify",
+      data: [this],
+    });
 
     const setText = text => {
       this.#content = text;
@@ -530,6 +538,10 @@ class FreeTextEditor extends AnnotationEditor {
       this.#setContent();
       this._uiManager.rebuild(this);
       this.#setEditorDimensions();
+      this._uiManager._eventBus.dispatch("annotationEditorChange", {
+        action: "modify",
+        data: [this],
+      });
     };
     this.addCommands({
       cmd: () => {
@@ -550,6 +562,8 @@ class FreeTextEditor extends AnnotationEditor {
 
   /** @inheritdoc */
   enterInEditMode() {
+    console.log("enterInEditMode");
+
     this.enableEditMode();
     this.editorDiv.focus();
   }
@@ -625,14 +639,12 @@ class FreeTextEditor extends AnnotationEditor {
     AnnotationEditor._l10nPromise
       .get("pdfjs-free-text-default-content")
       .then(msg => this.editorDiv?.setAttribute("default-content", msg));
-    this.editorDiv.contentEditable = true;
 
     const { style } = this.editorDiv;
     style.fontSize = `calc(${this.#fontSize}px * var(--scale-factor))`;
     style.color = this.#color;
 
     this.div.append(this.editorDiv);
-
     this.overlayDiv = document.createElement("div");
     this.overlayDiv.classList.add("overlay", "enabled");
     this.div.append(this.overlayDiv);
@@ -701,19 +713,39 @@ class FreeTextEditor extends AnnotationEditor {
         );
       }
 
-      this.#setContent();
       this._isDraggable = true;
       this.editorDiv.contentEditable = false;
     } else {
       this._isDraggable = false;
-      this.editorDiv.contentEditable = true;
+      if (this.editable) {
+        this.editorDiv.contentEditable = true;
+      }
     }
 
+    this.#setContent();
     if (typeof PDFJSDev !== "undefined" && PDFJSDev.test("TESTING")) {
       this.div.setAttribute("annotation-id", this.annotationElementId);
     }
 
     return this.div;
+  }
+
+  /** @inheritdoc */
+  unselect() {
+    super.unselect();
+    const textEditor = this.div.querySelector("#editorFreeTextParamsToolbar");
+    if (textEditor) {
+      textEditor.style.display = "none";
+      this.#isShowTextEditor = false;
+    }
+  }
+
+  /** @inheritdoc */
+  select() {
+    super.select();
+    if (!this.isDraggable) {
+      this.enterInEditMode();
+    }
   }
 
   static #getNodeContent(node) {
@@ -836,7 +868,6 @@ class FreeTextEditor extends AnnotationEditor {
   /** @inheritdoc */
   static deserialize(data, parent, uiManager) {
     let initialData = null;
-
     if (data instanceof FreeTextAnnotationElement) {
       const {
         data: {
@@ -873,7 +904,11 @@ class FreeTextEditor extends AnnotationEditor {
     const editor = super.deserialize(data, parent, uiManager);
     editor.#fontSize = data.fontSize;
     editor.#color = Util.makeHexColor(...data.color);
-    editor.#content = FreeTextEditor.#deserializeContent(data.value);
+    editor.#content = FreeTextEditor.#deserializeContent(data.value || "");
+    if (editor.#content === "") {
+      editor.width = 0;
+      editor.height = 0;
+    }
     editor.annotationElementId = data.id || null;
     editor.editorId = data.editorId || null;
     editor.#initialData = initialData;
@@ -927,7 +962,8 @@ class FreeTextEditor extends AnnotationEditor {
 
     serialized.id = this.annotationElementId;
     if (isForStorage) {
-      serialized.editorId = this.id;
+      serialized.editorId = this.id || this.editorId;
+      serialized.noAutoFocus = true;
     }
     return serialized;
   }

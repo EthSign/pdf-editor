@@ -53,6 +53,8 @@ class DateEditor extends AnnotationEditor {
 
   #isShowTextEditor = false;
 
+  #datepicker = null;
+
   static _freeTextDefaultContent = "";
 
   static _internalPadding = 0;
@@ -167,8 +169,6 @@ class DateEditor extends AnnotationEditor {
 
   /** @inheritdoc */
   async addEditToolbar() {
-    console.log("addEditToolbar");
-
     const toolbar = await super.addEditToolbar();
 
     if (!toolbar) {
@@ -428,14 +428,13 @@ class DateEditor extends AnnotationEditor {
 
   /** @inheritdoc */
   onceAdded() {
-    const picker = datepicker(this.editorDiv, {
-      onSelect: (instance, date) => {
-        this.editorDiv.innerText = date.toLocaleDateString();
-      },
-    });
-    setTimeout(() => {
-      picker.show();
-    }, 10);
+    if (this.editable) {
+      this.#datepicker = datepicker(this.editorDiv, {
+        onSelect: (instance, date) => {
+          this.editorDiv.innerText = date.toLocaleDateString();
+        },
+      });
+    }
 
     if (this.width) {
       // The editor was created in using ctrl+c.
@@ -845,7 +844,6 @@ class DateEditor extends AnnotationEditor {
   /** @inheritdoc */
   static deserialize(data, parent, uiManager) {
     let initialData = null;
-
     if (data instanceof FreeTextAnnotationElement) {
       const {
         data: {
@@ -882,12 +880,29 @@ class DateEditor extends AnnotationEditor {
     const editor = super.deserialize(data, parent, uiManager);
     editor.#fontSize = data.fontSize;
     editor.#color = Util.makeHexColor(...data.color);
-    editor.#content = DateEditor.#deserializeContent(data.value);
+    editor.#content = DateEditor.#deserializeContent(data.value || "");
     editor.annotationElementId = data.id || null;
     editor.editorId = data.editorId || null;
     editor.#initialData = initialData;
 
     return editor;
+  }
+
+  /** @inheritdoc */
+  select() {
+    super.select();
+    this.#datepicker?.show();
+  }
+
+  /** @inheritdoc */
+  unselect() {
+    super.unselect();
+    this.#datepicker?.hide();
+    const textEditor = this.div.querySelector("#editorFreeTextParamsToolbar");
+    if (textEditor) {
+      textEditor.style.display = "none";
+      this.#isShowTextEditor = false;
+    }
   }
 
   /** @inheritdoc */
@@ -936,7 +951,8 @@ class DateEditor extends AnnotationEditor {
 
     serialized.id = this.annotationElementId;
     if (isForStorage) {
-      serialized.editorId = this.id;
+      serialized.editorId = this.id || this.editorId;
+      serialized.noAutoFocus = true;
     }
     return serialized;
   }

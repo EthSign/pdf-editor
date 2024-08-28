@@ -23,7 +23,6 @@ export class PDFEditorConnector {
       disableHistory: true,
       disableDragOpen: true,
     };
-
     const [path, search] = viewerUrl.split("#");
 
     const searchParams = new URLSearchParams(search);
@@ -56,6 +55,11 @@ export class PDFEditorConnector {
       if (serialized) data.push(serialized);
     }
     return data;
+  }
+
+  selectAnnotationById(id: string) {
+    const annot = this.getAnnotationById(id);
+    this.app.pdfViewer.annotationEditorUIManager.setSelected(annot);
   }
 
   setAnnotations(annotations: any[]) {

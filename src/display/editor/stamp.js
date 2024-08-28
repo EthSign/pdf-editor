@@ -53,6 +53,7 @@ class StampEditor extends AnnotationEditor {
     this.#bitmapUrl = params.bitmapUrl;
     this.#bitmapFile = params.bitmapFile;
     this._willKeepAspectRatio = true;
+    this.isResizable = this.isResizable === null ? true : this.isResizable;
   }
 
   /** @inheritdoc */
@@ -168,8 +169,9 @@ class StampEditor extends AnnotationEditor {
         this.mlGuessAltText();
       } catch {}
     }
-
-    this.div.focus();
+    if (!this.noAutoFocus) {
+      this.div.focus();
+    }
   }
 
   async mlGuessAltText(imageData = null, updateAltTextData = true) {
@@ -352,11 +354,6 @@ class StampEditor extends AnnotationEditor {
       this.#bitmapFile ||
       this.#bitmapId
     );
-  }
-
-  /** @inheritdoc */
-  get isResizable() {
-    return true;
   }
 
   /** @inheritdoc */
@@ -725,18 +722,26 @@ class StampEditor extends AnnotationEditor {
       return null;
     }
     const editor = super.deserialize(data, parent, uiManager);
-    const { rect, bitmapId, isSvg, accessibilityData, bitmapFile } = data;
+    const {
+      rect,
+      bitmapId,
+      isSvg,
+      accessibilityData,
+      bitmapFile,
+      width,
+      height,
+    } = data;
     if (bitmapId && uiManager.imageManager.isValidId(bitmapId)) {
       editor.#bitmapId = bitmapId;
     } else {
       editor.#bitmapFile = bitmapFile;
     }
     editor.#isSvg = isSvg;
-    editor.eidtorId = data.eidtorId;
+    editor.editorId = data.editorId;
 
     const [parentWidth, parentHeight] = editor.pageDimensions;
-    editor.width = (rect[2] - rect[0]) / parentWidth;
-    editor.height = (rect[3] - rect[1]) / parentHeight;
+    editor.width = width / parentWidth || (rect[2] - rect[0]) / parentWidth;
+    editor.height = height / parentHeight || (rect[3] - rect[1]) / parentHeight;
 
     if (accessibilityData) {
       editor.altTextData = accessibilityData;
@@ -768,19 +773,21 @@ class StampEditor extends AnnotationEditor {
       // hence we serialize the bitmap to a data url.
       if (typeof this.#bitmapFile === "string") {
         serialized.bitmapFile = this.#bitmapFile;
+      } else {
+        serialized.bitmapUrl = this.#serializeBitmap(/* toUrl = */ true);
       }
-      serialized.bitmapUrl = this.#serializeBitmap(/* toUrl = */ true);
-      serialized.accessibilityData = this.serializeAltText(true);
+      //  serialized.accessibilityData = this.serializeAltText(true);
       if (context) {
-        serialized.eidtorId = this.id;
+        serialized.editorId = this.id || this.editorId;
+        serialized.noAutoFocus = true;
       }
       return serialized;
     }
 
-    const { decorative, altText } = this.serializeAltText(false);
-    if (!decorative && altText) {
-      serialized.accessibilityData = { type: "Figure", alt: altText };
-    }
+    // const { decorative, altText } = this.serializeAltText(false);
+    // if (!decorative && altText) {
+    //   serialized.accessibilityData = { type: "Figure", alt: altText };
+    // }
 
     if (context === null) {
       return serialized;
