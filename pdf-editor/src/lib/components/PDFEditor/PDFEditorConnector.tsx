@@ -8,6 +8,7 @@ import {
   PDFViewerApp,
   PDFViewerParams,
 } from "./types";
+import { locateKeywords } from "./utils";
 import { getViewerInstance } from "./utils/misc";
 import { WidgetRoot } from "./widgets/WidgetRoot";
 
@@ -235,6 +236,10 @@ export class PDFEditorConnector {
 
     const blob = new Blob([data], { type: "application/pdf" });
     return blob.arrayBuffer();
+  }
+
+  locate(keywords: string): Promise<{ pageIndex: number; rect: number[] }[]> {
+    return locateKeywords(this.app, keywords);
   }
 }
 

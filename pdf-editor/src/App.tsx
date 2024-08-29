@@ -234,6 +234,33 @@ function App() {
             >
               预览 pdf
             </button>
+
+            <button
+              onClick={async () => {
+                const keywords = "the";
+
+                const rects = await connector.locate(keywords);
+
+                const annots = rects.map(({ pageIndex, rect }, index) => {
+                  return {
+                    annotationType: 3,
+                    color: [255, 0, 0],
+                    fontSize: 10,
+                    value: "-".repeat(keywords.length),
+                    pageIndex: pageIndex,
+                    rect: rect,
+                    rotation: 0,
+                    structTreeParentId: null,
+                    id: null,
+                    editorId: "pdfjs_internal_editor_" + index,
+                  };
+                });
+
+                connector.setAnnotations(annots);
+              }}
+            >
+              定位关键字
+            </button>
           </div>
         </div>
 
