@@ -182,7 +182,7 @@ const PDFViewerApplication = {
   _isCtrlKeyDown: false,
   _caretBrowsing: null,
   _isScrolling: false,
-  _onKeydown: onKeyDown.bind(this),
+  _keydownInterceptor: null,
 
   // Called once when the document is loaded.
   async initialize(appConfig) {
@@ -2038,7 +2038,17 @@ const PDFViewerApplication = {
       signal,
     });
     window.addEventListener("click", onClick.bind(this), { signal });
-    window.addEventListener("keydown", this._onKeydown, { signal });
+    window.addEventListener(
+      "keydown",
+      event => {
+        if (typeof this._keydownInterceptor === "function") {
+          this._keydownInterceptor(event, () => onKeyDown.call(this, event));
+          return;
+        }
+        onKeyDown.call(this, event);
+      },
+      { signal }
+    );
     window.addEventListener("keyup", onKeyUp.bind(this), { signal });
     window.addEventListener(
       "resize",

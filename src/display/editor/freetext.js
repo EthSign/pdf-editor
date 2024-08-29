@@ -58,7 +58,7 @@ class FreeTextEditor extends AnnotationEditor {
 
   static _defaultColor = null;
 
-  static _defaultFontSize = 10;
+  static _defaultFontSize = 12;
 
   static get _keyboardManager() {
     const proto = FreeTextEditor.prototype;
@@ -562,8 +562,6 @@ class FreeTextEditor extends AnnotationEditor {
 
   /** @inheritdoc */
   enterInEditMode() {
-    console.log("enterInEditMode");
-
     this.enableEditMode();
     this.editorDiv.focus();
   }
@@ -636,9 +634,13 @@ class FreeTextEditor extends AnnotationEditor {
     this.editorDiv.setAttribute("data-l10n-id", "pdfjs-free-text");
     this.enableEditing();
 
-    AnnotationEditor._l10nPromise
-      .get("pdfjs-free-text-default-content")
-      .then(msg => this.editorDiv?.setAttribute("default-content", msg));
+    if (this.data.label) {
+      this.editorDiv?.setAttribute("default-content", this.data.label);
+    } else {
+      AnnotationEditor._l10nPromise
+        .get("pdfjs-free-text-default-content")
+        .then(msg => this.editorDiv?.setAttribute("default-content", msg));
+    }
 
     const { style } = this.editorDiv;
     style.fontSize = `calc(${this.#fontSize}px * var(--scale-factor))`;
@@ -719,6 +721,13 @@ class FreeTextEditor extends AnnotationEditor {
       this._isDraggable = false;
       if (this.editable) {
         this.editorDiv.contentEditable = true;
+      }
+
+      if (this.editorId) {
+        const [tx, ty] = this.getInitialTranslation();
+        const [parentWidth, parentHeight] = this.parentDimensions;
+
+        this.setAt(this.x * parentWidth, this.y * parentHeight, -tx, -ty);
       }
     }
 

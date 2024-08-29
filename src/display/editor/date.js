@@ -61,7 +61,7 @@ class DateEditor extends AnnotationEditor {
 
   static _defaultColor = null;
 
-  static _defaultFontSize = 10;
+  static _defaultFontSize = 12;
 
   static get _keyboardManager() {
     const proto = DateEditor.prototype;
@@ -693,13 +693,7 @@ class DateEditor extends AnnotationEditor {
         }
         this.setAt(posX * parentWidth, posY * parentHeight, tx, ty);
       } else if (this.editorId) {
-        let [tx, ty] = this.getInitialTranslation();
-        const scale = this.parentScale;
-        [tx, ty] = this.pageTranslationToScreen(
-          tx,
-          -DateEditor._internalPadding * scale
-        );
-        this.setAt(baseX * parentWidth, baseY * parentHeight, tx, ty);
+        this.setAt(baseX * parentWidth, baseY * parentHeight, 0, 0);
       } else {
         this.setAt(
           baseX * parentWidth,

@@ -174,7 +174,7 @@ class AnnotationEditor {
     this._willKeepAspectRatio = false;
     this._initialOptions.isCentered = parameters.isCentered;
     this._structTreeParentId = null;
-    this.#data = parameters.data;
+    this.#data = parameters.data ? { ...parameters.data } : {};
     this.#resizers = parameters.resizers;
     this.noAutoFocus = parameters.noAutoFocus;
     this.#isResizable = parameters.isResizable || null;
@@ -1403,7 +1403,7 @@ class AnnotationEditor {
   static deserialize(data, parent, uiManager) {
     const editor = new this.prototype.constructor({
       parent,
-      id: parent.getNextId(),
+      id: data.editorId || parent.getNextId(),
       uiManager,
       ...data,
     });

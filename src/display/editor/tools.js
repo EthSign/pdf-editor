@@ -660,25 +660,25 @@ class AnnotationEditorUIManager {
       this,
       "_keyboardManager",
       new KeyboardManager([
-        [
-          ["ctrl+a", "mac+meta+a"],
-          proto.selectAll,
-          { checker: textInputChecker },
-        ],
-        [["ctrl+z", "mac+meta+z"], proto.undo, { checker: textInputChecker }],
-        [
-          // On mac, depending of the OS version, the event.key is either "z" or
-          // "Z" when the user presses "meta+shift+z".
-          [
-            "ctrl+y",
-            "ctrl+shift+z",
-            "mac+meta+shift+z",
-            "ctrl+shift+Z",
-            "mac+meta+shift+Z",
-          ],
-          proto.redo,
-          { checker: textInputChecker },
-        ],
+        // [
+        //   ["ctrl+a", "mac+meta+a"],
+        //   proto.selectAll,
+        //   { checker: textInputChecker },
+        // ],
+        // [["ctrl+z", "mac+meta+z"], proto.undo, { checker: textInputChecker }],
+        // [
+        //   // On mac, depending of the OS version, the event.key is either "z" or
+        //   // "Z" when the user presses "meta+shift+z".
+        //   [
+        //     "ctrl+y",
+        //     "ctrl+shift+z",
+        //     "mac+meta+shift+z",
+        //     "ctrl+shift+Z",
+        //     "mac+meta+shift+Z",
+        //   ],
+        //   proto.redo,
+        //   { checker: textInputChecker },
+        // ],
         [
           [
             "Backspace",

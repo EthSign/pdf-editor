@@ -150,7 +150,7 @@ class PDFSidebar {
       this.#dispatchEvent();
       return;
     }
-    this.switchView(view, /* forceOpen = */ true);
+    this.switchView(view, /* forceOpen = */ false);
 
     // Prevent dispatching two back-to-back "sidebarviewchanged" events,
     // since `this.switchView` dispatched the event if the view changed.
@@ -257,9 +257,9 @@ class PDFSidebar {
   }
 
   close(evt = null) {
-    if (!this.isOpen) {
-      return;
-    }
+    // if (!this.isOpen) {
+    //   return;
+    // }
     this.isOpen = false;
     toggleExpandedBtn(this.toggleButton, false);
 
