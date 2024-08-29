@@ -209,6 +209,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  transition: opacity;
+  transition-duration: 200ms;
+}
+
+.widget-page-indicator-wrapper[data-visible="false"] {
+  opacity: 0;
 }
 
 .widget-page-indicator {
@@ -236,7 +243,7 @@
 }
 
 .widget-page-indicator input {
-  width: 16px;
+  width: 1ch;
   padding: 0;
   border: none;
   text-align: right;

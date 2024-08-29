@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IconLeft, IconRight } from "../icons";
+import { EventHelper } from "../utils";
+import { useDelayedToggle } from "../utils/misc";
 import { useWidgetContext } from "./WidgetContext";
 
 export const PageIndicator: React.FC = () => {
@@ -9,28 +11,52 @@ export const PageIndicator: React.FC = () => {
 
   const [totalPage, setTotalPage] = useState(0);
 
+  const [visible, setVisible] = useState(false);
+
   const bus = viewerApp.eventBus;
 
+  const indicatorToggle = useDelayedToggle({
+    open: () => setVisible(true),
+    close: () => setVisible(false),
+    duration: 5000,
+  });
+
   useEffect(() => {
-    const onPagesLoaded = (data: { pagesCount: number }) => {
-      setTotalPage(data.pagesCount);
-    };
+    const helper = new EventHelper(bus, {
+      pagesloaded: (data: { pagesCount: number }) => {
+        setCurrentPageInput(viewerApp.pdfViewer?.currentPageNumber ?? 1);
+        setTotalPage(data.pagesCount);
+        indicatorToggle.open();
+      },
 
-    const onPageChanging = (data: { pageNumber: number }) => {
-      setCurrentPageInput(data.pageNumber);
-    };
+      pagechanging: (data: { pageNumber: number }) => {
+        setCurrentPageInput(data.pageNumber);
+      },
 
-    bus.on("pagesloaded", onPagesLoaded);
-    bus.on("pagechanging", onPageChanging);
+      updateviewarea: () => {
+        indicatorToggle.open();
+      },
+    });
+
+    helper.mount();
 
     return () => {
-      bus.off("pagesloaded", onPagesLoaded);
-      bus.off("pagechanging", onPageChanging);
+      indicatorToggle.close();
+      helper.unmount();
     };
   }, []);
 
   return (
-    <div className="widget-page-indicator-wrapper">
+    <div
+      className="widget-page-indicator-wrapper"
+      data-visible={visible}
+      onMouseEnter={() => {
+        indicatorToggle.pause();
+      }}
+      onMouseLeave={() => {
+        indicatorToggle.resume();
+      }}
+    >
       <div className="widget-page-indicator">
         <IconLeft
           fill="white"
@@ -43,6 +69,9 @@ export const PageIndicator: React.FC = () => {
           <input
             type="text"
             value={currentPageInput}
+            style={{
+              width: (currentPageInput.toString().length ?? 1) + "ch",
+            }}
             onChange={(e) => {
               const input = e.target.value;
               if (!/^\d*$/.test(input)) return;

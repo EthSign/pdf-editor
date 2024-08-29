@@ -1,5 +1,11 @@
 import fontkit from "@pdf-lib/fontkit";
-import { PDFDocument, PDFFont, PDFPage, rgb, setLineHeight, StandardFonts } from "pdf-lib";
+import {
+  PDFDocument,
+  PDFFont,
+  PDFPage,
+  rgb,
+  StandardFonts
+} from "pdf-lib";
 import { Annotation } from "../types";
 
 function getAnnotationPosition(annotation: Annotation) {
@@ -21,7 +27,7 @@ export async function convertTextAnnotation(params: {
 
   const { x, y } = getAnnotationPosition(annotation);
 
-  const { fontSize, color } = annotation
+  const { fontSize, color } = annotation;
 
   try {
     return page.drawText(annotation.value, {
@@ -30,7 +36,13 @@ export async function convertTextAnnotation(params: {
       lineHeight: fontSize * 1.5,
       size: fontSize,
       font,
-      color: rgb(...(color.map((item: number) => item / 255) as [number, number, number])),
+      color: rgb(
+        ...(color.map((item: number) => item / 255) as [
+          number,
+          number,
+          number,
+        ]),
+      ),
     });
   } catch (error) {
     throw new Error("text annotation convert failed", { cause: error });
@@ -86,14 +98,17 @@ export async function convertAnnotationsToContent(params: {
       if (typeof params.font === "string") {
         const fontBytes = await fetch(params.font).then((res) =>
           res.arrayBuffer(),
-        )
+        );
         font = await pdfDoc.embedFont(fontBytes);
       } else {
         font = await pdfDoc.embedFont(params.font);
       }
     } catch (error) {
-      const wrappedError = new Error('Custom font embed failed, fallback to helvetica', { cause: error })
-      console.error(wrappedError)
+      const wrappedError = new Error(
+        "Custom font embed failed, fallback to helvetica",
+        { cause: error },
+      );
+      console.error(wrappedError);
       font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     }
   } else {

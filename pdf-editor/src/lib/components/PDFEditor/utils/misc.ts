@@ -1,3 +1,5 @@
+import { useRef } from "react";
+
 export const getViewerInstance = (pdfIframe: HTMLIFrameElement) => {
   if (
     !pdfIframe.contentWindow ||
@@ -32,7 +34,7 @@ export function debounce<T extends (...args: any[]) => void>(
 export class EventHelper {
   constructor(
     public eventBus: any,
-    public listeners: Record<string, (...args: unknown[]) => void>,
+    public listeners: Record<string, (...args: any[]) => void>,
   ) {}
 
   mount() {
@@ -49,3 +51,53 @@ export class EventHelper {
     }
   }
 }
+
+export const useDelayedToggle = (params: {
+  open: () => void;
+  close: () => void;
+  duration: number;
+}) => {
+  const { duration } = params;
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const clearTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const delayedClose = () => {
+    timerRef.current = setTimeout(() => {
+      params.close();
+    }, duration);
+  };
+
+  const open = () => {
+    clearTimer();
+    params.open();
+    delayedClose();
+  };
+
+  const close = () => {
+    clearTimer();
+    params.close();
+  };
+
+  const pause = () => {
+    clearTimer();
+  };
+
+  const resume = () => {
+    clearTimer();
+    delayedClose();
+  };
+
+  return {
+    open,
+    close,
+    pause,
+    resume,
+  };
+};
