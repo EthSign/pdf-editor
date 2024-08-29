@@ -74,6 +74,6 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "pdfjs-dist": "file:build/dist"
+    "@pdf-lib/fontkit": "^1.1.1"
   }
 }

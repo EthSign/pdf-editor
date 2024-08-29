@@ -1,11 +1,13 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { useEffect, useState } from "react";
 import {
   AnnotationEditorType,
+  convertAnnotationsToContent,
+  download,
+  pdfBytesToUrl,
   PDFEditor,
-} from "./lib/components/PDFEditor/PDFEditor";
+} from "./lib/components/PDFEditor";
 import { usePDFEditorConnector } from "./lib/components/PDFEditor/PDFEditorConnector";
-
-import { useEffect, useState } from "react";
 
 export interface PDFEditor {
   viewerUrl: string;
@@ -15,7 +17,7 @@ function App() {
   const connector = usePDFEditorConnector({
     viewerUrl: "/pdf-viewer/web/viewer.html",
     viewerParams: { disableHistory: true, disableDragOpen: true },
-    mobileMode: false
+    mobileMode: false,
   });
 
   const [annots, setAnnots] = useState<any[]>([
@@ -192,6 +194,44 @@ function App() {
               }}
             >
               关闭拖动
+            </button>
+
+            <button
+              onClick={async () => {
+                const annotations = connector.getAllAnnotations();
+                const pdfData = await connector.getPdfData();
+
+                if (!pdfData) return;
+                const pdfBytes = await convertAnnotationsToContent({
+                  annotations,
+                  pdf: pdfData,
+                  font: "/fonts/Noto_Sans_SC/static/NotoSansSC-Regular.ttf",
+                });
+
+                download(pdfBytes, connector.filename);
+              }}
+            >
+              保存 pdf
+            </button>
+
+            <button
+              onClick={async () => {
+                const annotations = connector.getAllAnnotations();
+                const pdfData = await connector.getPdfData();
+
+                if (!pdfData) return;
+
+                const pdfBytes = await convertAnnotationsToContent({
+                  annotations,
+                  pdf: pdfData,
+                  font: "/fonts/Noto_Sans_SC/static/NotoSansSC-Regular.ttf",
+                });
+
+                const url = pdfBytesToUrl(pdfBytes);
+                window.open(url, "_blank");
+              }}
+            >
+              预览 pdf
             </button>
           </div>
         </div>

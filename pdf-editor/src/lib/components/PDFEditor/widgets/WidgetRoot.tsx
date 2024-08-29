@@ -10,17 +10,17 @@ export const WidgetRoot: React.FC<{
   connector: PDFEditorConnector;
   mainSlot: HTMLDivElement;
   sidebarSlot: HTMLElement;
+  title?: string;
 }> = (props) => {
-  const { connector, mainSlot, sidebarSlot } = props;
+  const { connector, mainSlot, sidebarSlot, title } = props;
 
   if (connector.mobileMode) return null;
-
   return (
     <WidgetContext.Provider value={{ connector }}>
       <div>
         {createPortal(
           <>
-            <TitleBar />
+            <TitleBar title={title} />
             <PageIndicator />
           </>,
           mainSlot,

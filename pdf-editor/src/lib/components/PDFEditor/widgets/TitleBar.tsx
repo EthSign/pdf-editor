@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useWidgetContext } from "./WidgetContext";
 
-export const TitleBar: React.FC = () => {
+export const TitleBar = (props: { title?: string }) => {
   const { viewerApp } = useWidgetContext();
 
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(props.title);
 
   const bus = viewerApp.eventBus;
 
   useEffect(() => {
     const onDocumentLoaded = () => {
+      if (props.title) return;
       const title = viewerApp._docFilename;
 
       setTitle(title);
@@ -20,7 +21,7 @@ export const TitleBar: React.FC = () => {
     return () => {
       bus.off("documentloaded", onDocumentLoaded);
     };
-  }, []);
+  }, [props.title]);
 
   return <div className="widget-title-wrapper">{title}</div>;
 };
