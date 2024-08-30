@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { PDFEditorProps } from "./types";
 
 export const PDFEditor: React.FC<PDFEditorProps> = (props) => {
-  const { className, connector, onReady, title } = props;
+  const { className, connector, onReady } = props;
 
   const [editorReady, setEditorReady] = useState(false);
 
@@ -12,10 +12,6 @@ export const PDFEditor: React.FC<PDFEditorProps> = (props) => {
       connector.disconnect();
     };
   }, []);
-
-  useEffect(() => {
-    connector.title = title;
-  }, [title]);
 
   return (
     <div className={clsx("pdf-editor", className)}>

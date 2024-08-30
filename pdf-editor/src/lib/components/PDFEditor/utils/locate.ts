@@ -36,7 +36,6 @@ export async function locateKeywords(
         if (startIndex !== -1) {
           const transform = item.transform;
           const fontHeight = Math.abs(transform[5] - transform[3]);
-
           const x1 = transform[4] + startIndex * (item.width / text.length);
           const y1 = transform[5];
           const x2 = x1 + keywords.length * (item.width / text.length);

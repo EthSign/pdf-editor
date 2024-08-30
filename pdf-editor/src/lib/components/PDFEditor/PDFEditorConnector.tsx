@@ -258,7 +258,9 @@ export class PDFEditorConnector {
     return blob.arrayBuffer();
   }
 
-  locate(keywords: string): Promise<{ pageIndex: number; rect: number[] }[]> {
+  async locate(
+    keywords: string,
+  ): Promise<{ pageIndex: number; rect: number[] }[]> {
     return locateKeywords(this.app, keywords);
   }
 }
