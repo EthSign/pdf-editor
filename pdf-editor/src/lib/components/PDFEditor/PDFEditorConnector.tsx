@@ -3,19 +3,24 @@ import { useRef } from "react";
 import { createRoot } from "react-dom/client";
 import cssPatch from "./patch.css?inline";
 import {
+  Annotation,
   AnnotationEditorType,
   PDFViewerApp,
   PDFViewerParams,
-  Annotation,
 } from "./types";
 import { locateKeywords } from "./utils";
+import { createEventBus } from "./utils/eventbus";
 import { getViewerInstance } from "./utils/misc";
 import { WidgetRoot } from "./widgets/WidgetRoot";
 
 export class PDFEditorConnector {
   viewerUrl: string;
 
+  // pdf viewer's event bus ref
   eventBus!: any;
+
+  // conenctor's event bus
+  _eventBus = createEventBus();
 
   iframeWindow!: Window;
 
