@@ -33,16 +33,17 @@ export async function locateKeywords(
         const text = item.str;
         const startIndex = text.indexOf(keywords);
 
+        const { width, height } = item
+
         if (startIndex !== -1) {
           const transform = item.transform;
-          const fontHeight = Math.abs(transform[5] - transform[3]);
 
-          const x1 = transform[4] + startIndex * (item.width / text.length);
+          const x1 = transform[4] + startIndex * (width / text.length);
           const y1 = transform[5];
-          const x2 = x1 + keywords.length * (item.width / text.length);
-          const y2 = y1 - fontHeight;
+          const x2 = x1 + keywords.length * (width / text.length);
+          const y2 = y1 + height;
 
-          const rect = [x1, y2, x2, y1];
+          const rect = [x1, y1, x2, y2];
 
           rects.push({ pageIndex, rect });
         }

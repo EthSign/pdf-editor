@@ -242,15 +242,14 @@ function App() {
 
                 const annots = rects.map(({ pageIndex, rect }, index) => {
                   return {
-                    annotationType: 3,
-                    color: [255, 0, 0],
-                    fontSize: 10,
-                    value: "-".repeat(keywords.length),
+                    annotationType: 13,
+                    bitmapId: "image_c974f109-cdaf-44bb-84f8-1745e7165416_" + index,
                     pageIndex: pageIndex,
                     rect: rect,
                     rotation: 0,
+                    isSvg: false,
                     structTreeParentId: null,
-                    id: null,
+                    bitmapUrl: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFEAAABRCAYAAACqj0o2AAAAAXNSR0IArs4c6QAABOJJREFUeF7tm+F10zAQx/9KM4CYgLJBPEHpBNCvkDzaCSgTQCeATtD0EXh8AyYgTGBvQJkA8RVoTE+y++ImjuX4znb6pK+Rz9Ivf0l3p7NCaI0JqMYWggEEiAwiCBADRAYCDCaCEgNEBgIMJoISA0QGAgwmghIDRAYCDCaCEgNEBgIMJoIS7xvE+Fhr/MMICqMB8HCxgF6e42AAswB+IkWCIZJoagwDg8YmOldiPNaPARwAeApgVHNGyUBhvrjGZfTRJDWfZeveGcR4oo+R4gUAgsjREiicR+/NlMNYHRutQ7TKU7hAiv06A/Xuq3AF4KxNmK1BjI/1Pv7hglF5m7kqTLGHs2hqCKpoawVipr7PSIsHhejMyDipMsWraGa+SL5LHGI81i8BvJOchIftN9HMnHn026qLKMR4rF/fjOrNViPjf0gMpBjEngHM/xIRkCIQM/eFDpH+tRTH0QdzyTkwdoj2FL5G3Poh4k/FYIiI89TmhzjRP8R8QH9QVT3n0cwcVnXy/Z0VYk9OYr+5k+vzwbB4DSwQbeLgD/axB/IFZSIRPzR1etGyfsSRxNgaIjnQA4Uni9TGvnUTB36TVaAsjfPvUpC7VMjq+BnZ2OssmpnGLlgtiFmq6uVNJEDJA1nFEcA9HEZTl52Jn+kRBvjGDJJFjd4QrdsCvBaH58K1AsBcSyIgGfbGSohWfdc260L5PvlWAlAQZOOTeiPEzOf71or6Nijw7j/HrsghHjQ5YEoh9hWgkCIPo5mZb7vM1kLsO0ABkHMofN327mYFYrYHUtgme/rmJCr2wCp1sC9t90KCeumbHV+FONFvkeK0avAsvzcEKKDI4rQoqbvAeVVkU4CYpfB/sACqMsIEUBykO/CuMp917VVDEeJYkzPLdftWjpEZYCsgAUMrdF0a7RZidv9LEGWbEMCWQFL4uZKPvIWYTPRFmoKiErkmDLA1kEDBJbIQs5j4lxy98lBO6p1Cp7YbrtsjKbFry1gcxLGmkO6z1ITKYmGx92WGRUECX6KZOVqGSMlJutrkby0t4bKBC4O0yzpXouSpnNhIoKqRc1sz9LKHoavn2dyUDRwkvA6bvHAQ+3AvonDiGyHcHiCuKKrbW8UhHuRKTKv+TPHfdxWiwkmA2FQdKaYBYlOIQBL2xOYQTa7EWOzGzneQu7onLjnbVKJb7Sr4Atmm385DfK5PofB2m7mzPbO7ELPl7EqB28kjllHfXYjuYLEOd1u5xPsGUWUujoXY9ZLeVSXmzraF6L5moiXNXe/it23uKsQhHhWvByb6FGlHBwx9MgF89yPueingQDyRvGlACtPovXFh33LrfG+sQ7Hrvq4072rdvTOd1OR8d7Osuwbj+/5MhdmKWH2q14XrvpOU7HfnCrW8FmesqfiRCitDWyVwtPyV1uaqsABynYBWqmur6xPpEotCwrZqc/qs+wVOoo+rnwJXQsx8SDpsaHl3m6ToCrDbA4/y0ue7w/CCmD+UVUnQPilx6dMVovL30k1linMM8W5TEWgtiLcwXRE6ZX4O7uUyd5/4XlbBy3lsBbHgnDugdCU5url5e9g/OXmOSOE3FBL8xTz6VO9D88YQPYd4r7sFiAx/b4AYIDIQYDARlBggMhBgMBGUGCAyEGAwEZQYIDIQYDARlBggMhBgMBGUyADxP/d6/de9me32AAAAAElFTkSuQmCC",
                     editorId: "pdfjs_internal_editor_" + index,
                   };
                 });
