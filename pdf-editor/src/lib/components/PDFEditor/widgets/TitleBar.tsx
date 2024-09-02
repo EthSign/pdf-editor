@@ -1,27 +1,33 @@
 import { useEffect, useState } from "react";
 import { useWidgetContext } from "./WidgetContext";
+import { Events } from "../utils/eventbus";
 
-export const TitleBar = (props: { title?: string }) => {
-  const { viewerApp } = useWidgetContext();
+export const TitleBar = () => {
+  const { viewerApp, connector } = useWidgetContext();
 
-  const [title, setTitle] = useState(props.title);
+  const [filename, setFilename] = useState();
+  const [title, setTitle] = useState("");
 
   const bus = viewerApp.eventBus;
 
   useEffect(() => {
     const onDocumentLoaded = () => {
-      if (props.title) return;
       const title = viewerApp._docFilename;
+      setFilename(title);
+    };
 
+    const onTitleUpdate = (title: string) => {
       setTitle(title);
     };
 
     bus.on("documentloaded", onDocumentLoaded);
+    connector._eventBus.on(Events.updateTitle, onTitleUpdate);
 
     return () => {
       bus.off("documentloaded", onDocumentLoaded);
+      connector._eventBus.off(Events.updateTitle, onTitleUpdate);
     };
-  }, [props.title]);
+  }, []);
 
-  return <div className="widget-title-wrapper">{title}</div>;
+  return <div className="widget-title-wrapper">{title || filename}</div>;
 };

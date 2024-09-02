@@ -119,7 +119,6 @@ class AnnotationEditorLayer {
     this.viewport = viewport;
     this.#textLayer = textLayer;
     this.drawLayer = drawLayer;
-
     this.#uiManager.addLayer(this);
   }
 

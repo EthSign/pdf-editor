@@ -425,7 +425,7 @@ class StampEditor extends AnnotationEditor {
     }
     this.#drawBitmap(width, height);
     this.#createObserver();
-    if (!this.#hasBeenAddedInUndoStack) {
+    if (!this.#hasBeenAddedInUndoStack && this.parent) {
       this.parent.addUndoableEditor(this);
       this.#hasBeenAddedInUndoStack = true;
     }

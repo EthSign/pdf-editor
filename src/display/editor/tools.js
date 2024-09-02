@@ -286,7 +286,7 @@ class CommandManager {
     }
 
     const save = { cmd, undo, post, type };
-    if (this.#position === -1) {
+    if (this.#position === -1 && this.#commands) {
       if (this.#commands.length > 0) {
         // All the commands have been undone and then a new one is added
         // hence we clear the queue.
@@ -1434,8 +1434,10 @@ class AnnotationEditorUIManager {
       return;
     }
 
+    if (data.length === 0) {
+      return;
+    }
     this.unselectAll();
-
     try {
       const newEditors = [];
       for (const editor of data) {

@@ -547,7 +547,7 @@ function getVisibleElements({
   // the tops of subsequent pages on the same row could still be visible. In
   // horizontal scrolling, we don't have that issue, so we can stop as soon as
   // we pass `right`, without needing the code below that handles the -1 case.
-  let lastEdge = horizontal ? right : -1;
+  // const lastEdge = horizontal ? right : -1;
 
   for (let i = firstVisibleElementInd; i < numViews; i++) {
     const view = views[i],
@@ -559,26 +559,26 @@ function getVisibleElements({
     const viewRight = currentWidth + viewWidth;
     const viewBottom = currentHeight + viewHeight;
 
-    if (lastEdge === -1) {
-      // As commented above, this is only needed in non-horizontal cases.
-      // Setting lastEdge to the bottom of the first page that is partially
-      // visible ensures that the next page fully below lastEdge is on the
-      // next row, which has to be fully hidden along with all subsequent rows.
-      if (viewBottom >= bottom) {
-        lastEdge = viewBottom;
-      }
-    } else if ((horizontal ? currentWidth : currentHeight) > lastEdge) {
-      break;
-    }
+    // if (lastEdge === -1) {
+    //   // As commented above, this is only needed in non-horizontal cases.
+    //   // Setting lastEdge to the bottom of the first page that is partially
+    //   // visible ensures that the next page fully below lastEdge is on the
+    //   // next row, which has to be fully hidden along with all subsequent rows.
+    //   if (viewBottom >= bottom) {
+    //     lastEdge = viewBottom;
+    //   }
+    // } else if ((horizontal ? currentWidth : currentHeight) > lastEdge) {
+    //   break;
+    // }
 
-    if (
-      viewBottom <= top ||
-      currentHeight >= bottom ||
-      viewRight <= left ||
-      currentWidth >= right
-    ) {
-      continue;
-    }
+    // if (
+    //   viewBottom <= top ||
+    //   currentHeight >= bottom ||
+    //   viewRight <= left ||
+    //   currentWidth >= right
+    // ) {
+    //   continue;
+    // }
 
     const hiddenHeight =
       Math.max(0, top - currentHeight) + Math.max(0, viewBottom - bottom);
@@ -612,6 +612,7 @@ function getVisibleElements({
       return a.id - b.id; // ensure stability
     });
   }
+
   return { first, last, views: visible, ids };
 }
 
