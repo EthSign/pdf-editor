@@ -1,13 +1,15 @@
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 import { useEffect, useState } from "react";
+import { PDFEditor } from "./lib/components/PDFEditor/PDFEditor";
+import { usePDFEditorConnector } from "./lib/components/PDFEditor/PDFEditorConnector";
+import { AnnotationEditorType } from "./lib/components/PDFEditor/types";
+import { diffPDF } from "./lib/components/PDFEditor/utils/compare";
 import {
-  AnnotationEditorType,
   convertAnnotationsToContent,
   download,
   pdfBytesToUrl,
-  PDFEditor,
-} from "./lib/components/PDFEditor";
-import { usePDFEditorConnector } from "./lib/components/PDFEditor/PDFEditorConnector";
+} from "./lib/components/PDFEditor/utils/conversion";
+import { uploadPDFFile } from "./lib/components/PDFEditor/utils/misc";
 
 export interface PDFEditor {
   viewerUrl: string;
@@ -260,6 +262,29 @@ function App() {
               }}
             >
               定位关键字
+            </button>
+
+            <button
+              onClick={async () => {
+                const uploadedPDFTextContent = uploadPDFFile();
+
+                const currentPDFTextContent = connector
+                  .getPdfData()
+                  .then((data) => data as ArrayBuffer);
+
+                const [pdfA, pdfB] = await Promise.all([
+                  currentPDFTextContent,
+                  uploadedPDFTextContent,
+                ]);
+
+                const diffs = await diffPDF(pdfA, pdfB, {
+                  pdfWorkerSrc: "../public/pdf-viewer/build/pdf.worker.mjs",
+                });
+
+                console.log({ diffs });
+              }}
+            >
+              文件对比
             </button>
           </div>
         </div>

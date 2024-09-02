@@ -101,3 +101,50 @@ export const useDelayedToggle = (params: {
     resume,
   };
 };
+
+export async function uploadPDFFile() {
+  const fileInput = document.createElement("input");
+  fileInput.hidden = true;
+  fileInput.type = "file";
+  fileInput.value = "";
+  fileInput.accept = "application/pdf";
+  document.body.append(fileInput);
+
+  let resolve!: (bytes: ArrayBuffer) => void;
+  let reject!: (reason: any) => void;
+  const promise = new Promise<ArrayBuffer>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  const onFileChange = async (evt: Event) => {
+    if (!evt.target) return;
+
+    const { files } = evt.target as HTMLInputElement;
+
+    if (!files || files.length === 0) {
+      return;
+    }
+
+    const file = files[0];
+    const bytes = await file.arrayBuffer();
+
+    resolve(bytes);
+
+    fileInput.removeEventListener("change", onFileChange);
+    fileInput.remove();
+  };
+
+  const onAbort = () => {
+    reject(new Error("File upload canceld"));
+
+    fileInput.removeEventListener("change", onFileChange);
+    fileInput.remove();
+  };
+
+  fileInput.addEventListener("change", onFileChange);
+  fileInput.addEventListener("cancel", onAbort);
+  fileInput.click();
+
+  return promise;
+}
