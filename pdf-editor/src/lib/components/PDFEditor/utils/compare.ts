@@ -59,7 +59,7 @@ export async function extractTextContent(doc: pdfjs.PDFDocumentProxy) {
         const { str, hasEOL } = textItem as any;
         strBuf.push(str);
         if (hasEOL) {
-          strBuf.push("\n");
+          // strBuf.push("\n");
         }
       }
 
@@ -74,12 +74,10 @@ export async function extractTextContent(doc: pdfjs.PDFDocumentProxy) {
   return pageContents;
 }
 
-export async function diffPDF(
-  oldPDF: PDFData,
-  newPDF: PDFData,
-) {
+export async function diffPDF(oldPDF: PDFData, newPDF: PDFData) {
   if (!pdfjs.GlobalWorkerOptions.workerSrc) {
-    pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.mjs"
+    pdfjs.GlobalWorkerOptions.workerSrc =
+      "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.mjs";
   }
 
   const [pdfTextA, pdfTextB] = await Promise.all([
