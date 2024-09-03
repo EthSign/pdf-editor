@@ -1,4 +1,5 @@
 import { Change, diffChars } from "diff";
+import { PDFDocument } from "pdf-lib";
 import * as pdfjs from "pdfjs-dist";
 
 type TypedArray =
@@ -114,4 +115,10 @@ export async function diffPDF(
     consistent,
     diffs,
   };
+}
+
+export async function getSubject(pdf: string | ArrayBuffer | Uint8Array) {
+  const pdfDoc = await PDFDocument.load(pdf);
+
+  return pdfDoc.getSubject();
 }

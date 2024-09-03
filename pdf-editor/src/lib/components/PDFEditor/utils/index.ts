@@ -1,4 +1,9 @@
-export { diffPDF, extractTextContent, getDocument } from "./compare";
+export {
+  diffPDF,
+  extractTextContent,
+  getDocument,
+  getSubject,
+} from "./compare";
 export {
   convertAnnotationsToContent,
   download,
