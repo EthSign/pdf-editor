@@ -277,9 +277,7 @@ function App() {
                   uploadedPDFTextContent,
                 ]);
 
-                const diffs = await diffPDF(pdfA, pdfB, {
-                  pdfWorkerSrc: "../node_modules/pdfjs-dist/build/pdf.worker.mjs",
-                });
+                const diffs = await diffPDF(pdfA, pdfB);
 
                 console.log({ diffs });
               }}

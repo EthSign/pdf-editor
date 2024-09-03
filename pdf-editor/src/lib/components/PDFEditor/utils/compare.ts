@@ -77,12 +77,9 @@ export async function extractTextContent(doc: pdfjs.PDFDocumentProxy) {
 export async function diffPDF(
   oldPDF: PDFData,
   newPDF: PDFData,
-  options?: {
-    pdfWorkerSrc: string;
-  },
 ) {
-  if (!pdfjs.GlobalWorkerOptions.workerSrc && options?.pdfWorkerSrc) {
-    pdfjs.GlobalWorkerOptions.workerSrc = options.pdfWorkerSrc;
+  if (!pdfjs.GlobalWorkerOptions.workerSrc) {
+    pdfjs.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.mjs"
   }
 
   const [pdfTextA, pdfTextB] = await Promise.all([
