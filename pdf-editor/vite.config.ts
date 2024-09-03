@@ -24,7 +24,7 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: "../build/dist/*",
+          src: "../build/generic/*",
           dest: "../public/pdf-viewer",
         },
       ],

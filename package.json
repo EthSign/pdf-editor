@@ -72,8 +72,5 @@
   "engines": {
     "node": ">=18"
   },
-  "license": "Apache-2.0",
-  "dependencies": {
-    "@pdf-lib/fontkit": "^1.1.1"
-  }
+  "license": "Apache-2.0"
 }

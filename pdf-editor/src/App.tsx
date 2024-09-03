@@ -278,7 +278,7 @@ function App() {
                 ]);
 
                 const diffs = await diffPDF(pdfA, pdfB, {
-                  pdfWorkerSrc: "../public/pdf-viewer/build/pdf.worker.mjs",
+                  pdfWorkerSrc: "../node_modules/pdfjs-dist/build/pdf.worker.mjs",
                 });
 
                 console.log({ diffs });

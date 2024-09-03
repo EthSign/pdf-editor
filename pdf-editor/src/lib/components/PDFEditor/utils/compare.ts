@@ -1,5 +1,5 @@
 import { Change, diffChars } from "diff";
-import * as pdfjs from "../../../../../public/pdf-viewer";
+import * as pdfjs from "pdfjs-dist";
 
 type TypedArray =
   | Int8Array
