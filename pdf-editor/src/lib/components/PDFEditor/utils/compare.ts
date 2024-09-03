@@ -73,9 +73,13 @@ export async function extractTextContent(doc: pdfjs.PDFDocumentProxy) {
   return pageContents;
 }
 
-export async function diffPDF(oldPDF: PDFData, newPDF: PDFData, options?: {
-  pdfWorkerSrc: string
-}) {
+export async function diffPDF(
+  oldPDF: PDFData,
+  newPDF: PDFData,
+  options?: {
+    pdfWorkerSrc: string;
+  },
+) {
   if (!pdfjs.GlobalWorkerOptions.workerSrc && options?.pdfWorkerSrc) {
     pdfjs.GlobalWorkerOptions.workerSrc = options.pdfWorkerSrc;
   }
@@ -89,7 +93,7 @@ export async function diffPDF(oldPDF: PDFData, newPDF: PDFData, options?: {
   const diffs: { pageIndex: number; consistent: boolean; changes: Change[] }[] =
     [];
 
-  const minPageCount = pdfTextA.length
+  const minPageCount = pdfTextA.length;
 
   for (let pageIndex = 0; pageIndex < minPageCount; pageIndex++) {
     const pageA = pdfTextA[pageIndex] ?? "";

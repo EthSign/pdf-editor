@@ -1,4 +1,4 @@
-import fontkit from "@pdf-lib/fontkit";
+import fontkit from "pdf-fontkit";
 import { PDFDocument, PDFFont, PDFPage, rgb, StandardFonts } from "pdf-lib";
 import { Annotation } from "../types";
 
@@ -99,7 +99,9 @@ export async function convertAnnotationsToContent(params: {
       pdfDoc.registerFontkit(fontkit);
       if (typeof fontUrl === "string") {
         const fontBytes = await fetch(fontUrl).then((res) => res.arrayBuffer());
-        font = await pdfDoc.embedFont(fontBytes);
+        font = await pdfDoc.embedFont(fontBytes, {
+          subset: true,
+        });
       } else {
         font = await pdfDoc.embedFont(fontUrl);
       }
