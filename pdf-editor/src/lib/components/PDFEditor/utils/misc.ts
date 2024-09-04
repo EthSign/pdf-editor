@@ -108,11 +108,12 @@ export async function uploadPDFFile() {
   fileInput.type = "file";
   fileInput.value = "";
   fileInput.accept = "application/pdf";
+  fileInput.multiple = true;
   document.body.append(fileInput);
 
-  let resolve!: (bytes: ArrayBuffer) => void;
+  let resolve!: (bytes: ArrayBuffer[]) => void;
   let reject!: (reason: any) => void;
-  const promise = new Promise<ArrayBuffer>((res, rej) => {
+  const promise = new Promise<ArrayBuffer[]>((res, rej) => {
     resolve = res;
     reject = rej;
   });
@@ -126,10 +127,9 @@ export async function uploadPDFFile() {
       return;
     }
 
-    const file = files[0];
-    const bytes = await file.arrayBuffer();
-
-    resolve(bytes);
+    resolve(
+      await Promise.all(Array.from(files).map((file) => file.arrayBuffer())),
+    );
 
     fileInput.removeEventListener("change", onFileChange);
     fileInput.remove();
@@ -147,4 +147,20 @@ export async function uploadPDFFile() {
   fileInput.click();
 
   return promise;
+}
+
+export function withResolvers<T, R = Error>() {
+  let resolve!: (data: T) => void;
+  let reject!: (reason: R) => void;
+
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  return {
+    resolve,
+    reject,
+    promise,
+  };
 }

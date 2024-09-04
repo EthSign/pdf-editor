@@ -1,6 +1,7 @@
 import { Change, diffChars } from "diff";
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, PDFPage } from "pdf-lib";
 import * as pdfjs from "pdfjs-dist";
+import { withResolvers } from "./misc";
 
 type TypedArray =
   | Int8Array
@@ -74,41 +75,118 @@ export async function extractTextContent(doc: pdfjs.PDFDocumentProxy) {
   return pageContents;
 }
 
+export async function extractPageText(page: pdfjs.PDFPageProxy) {
+  const textContent = await page.getTextContent();
+
+  const strBuf: string[] = [];
+
+  for (const textItem of textContent.items) {
+    const { str, hasEOL } = textItem as any;
+    strBuf.push(str);
+
+    if (hasEOL) {
+      // strBuf.push("\n");
+    }
+  }
+
+  const text = strBuf.join("");
+
+  return text;
+}
+
+export async function extractPageImages(page: pdfjs.PDFPageProxy) {
+  const { argsArray, fnArray } = await page.getOperatorList();
+
+  const images = fnArray
+    .map((fn, index) => [fn, argsArray[index]])
+    .filter(([fn]) => fn === pdfjs.OPS.paintImageXObject)
+    .map(([, args]) => {
+      const objectId = args[0];
+
+      const { promise, reject, resolve } = withResolvers();
+
+      try {
+        page.objs.get(objectId, (objectData: any) => {
+          resolve({
+            imageName: objectId,
+            imageData: objectData,
+          });
+        });
+      } catch (error) {
+        reject(new Error("Extract image failed", { cause: error }));
+      }
+
+      return promise;
+    });
+
+  return Promise.all(images);
+}
+
 export async function diffPDF(oldPDF: PDFData, newPDF: PDFData) {
   if (!pdfjs.GlobalWorkerOptions.workerSrc) {
     pdfjs.GlobalWorkerOptions.workerSrc =
       "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.mjs";
   }
 
-  const [pdfTextA, pdfTextB] = await Promise.all([
-    getDocument(oldPDF).then(extractTextContent),
-    getDocument(newPDF).then(extractTextContent),
+  const [oldPDFDoc, newPDFDoc] = await Promise.all([
+    getDocument(oldPDF),
+    getDocument(newPDF),
   ]);
 
+  const pageCount = Math.min(oldPDFDoc.numPages, newPDFDoc.numPages);
+
   let consistent = true;
-  const diffs: { pageIndex: number; consistent: boolean; changes: Change[] }[] =
-    [];
 
-  const minPageCount = pdfTextA.length;
+  const pageDiffPromises: Promise<any>[] = [];
 
-  for (let pageIndex = 0; pageIndex < minPageCount; pageIndex++) {
-    const pageA = pdfTextA[pageIndex] ?? "";
-    const pageB = pdfTextB[pageIndex] ?? "";
+  for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+    const { promise, resolve } = withResolvers();
 
-    const changes = diffChars(pageA, pageB);
+    pageDiffPromises.push(promise);
 
-    const pageConsistent =
-      changes.length === 1 && !changes[0].added && !changes[0].removed;
+    (async () => {
+      const extractPageContents = async (page: pdfjs.PDFPageProxy) => {
+        const [text, images] = await Promise.all([
+          extractPageText(page),
+          extractPageImages(page),
+        ]);
+        return { text, images };
+      };
 
-    if (!pageConsistent) {
-      if (consistent) consistent = false;
-      diffs.push({ pageIndex, consistent: pageConsistent, changes });
-    }
+      const [oldPage, newPage] = await Promise.all([
+        oldPDFDoc.getPage(pageIndex + 1).then(extractPageContents),
+        newPDFDoc.getPage(pageIndex + 1).then(extractPageContents),
+      ]);
+
+      const textDiffs = diffChars(oldPage.text, newPage.text);
+      const imageDiffs = diffImages(oldPage.images, newPage.images);
+
+      const textConsistent =
+        textDiffs.length === 1 && !textDiffs[0].added && !textDiffs[0].removed;
+
+      const imageConsistent = !imageDiffs;
+
+      if (consistent && (!textConsistent || !imageConsistent)) {
+        consistent = false;
+      }
+
+      resolve({
+        pageIndex,
+        textConsistent,
+        imageConsistent,
+        textDiffs,
+        imageDiffs,
+      });
+    })();
   }
+
+  const pageDiffs = await Promise.all(pageDiffPromises).then((pages: any) =>
+    pages.filter((page: any) => !page.textConsistent || !page.imageConsistent),
+  );
 
   return {
     consistent,
-    diffs,
+    diffs: pageDiffs,
   };
 }
 
@@ -116,4 +194,37 @@ export async function getSubject(pdf: string | ArrayBuffer | Uint8Array) {
   const pdfDoc = await PDFDocument.load(pdf);
 
   return pdfDoc.getSubject();
+}
+
+function diffImages(imagesA: any, imagesB: any) {
+  if (!imagesA.length && !imagesB.length) {
+    return false;
+  }
+
+  if (imagesA.length !== imagesB.length) return true;
+
+  function buildImageMap(images: any) {
+    const imageMap = new Map();
+
+    images.map((data: any) => {
+      const { imageName, imageData } = data;
+      imageMap.set(imageName, imageData);
+    });
+
+    return imageMap;
+  }
+
+  const imagesMapB = buildImageMap(imagesB);
+
+  for (const image of imagesA) {
+    const { imageName, imageData: imageAData } = image;
+
+    const imageBData = imagesMapB.get(imageName);
+
+    if (!imageBData) return true;
+
+    const compareKeys = ["width", "height", "dataLen"];
+
+    return compareKeys.some((key) => imageAData[key] !== imageBData[key]);
+  }
 }
