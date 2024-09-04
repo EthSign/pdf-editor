@@ -18,10 +18,12 @@ export const WidgetRoot: React.FC<{
     <WidgetContext.Provider value={{ connector }}>
       <div>
         {createPortal(
-          <>
-            {!mobileMode && <TitleBar />}
-            <PageIndicator />
-          </>,
+          !mobileMode ? (
+            <>
+              <TitleBar />
+              <PageIndicator />
+            </>
+          ) : null,
           mainSlot,
         )}
 
