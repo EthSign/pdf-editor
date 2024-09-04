@@ -183,6 +183,7 @@ export class PDFEditorConnector {
 
     widgetRoot.render(
       <WidgetRoot
+        mobileMode={this.mobileMode}
         connector={this}
         mainSlot={mainContainerEl}
         sidebarSlot={sidebarContentEl}
