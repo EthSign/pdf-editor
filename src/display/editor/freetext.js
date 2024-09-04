@@ -165,17 +165,15 @@ class FreeTextEditor extends AnnotationEditor {
 
   /** @inheritdoc */
   async addEditToolbar() {
-    console.log("addEditToolbar");
-
     const toolbar = await super.addEditToolbar();
 
     if (!toolbar) {
       return null;
     }
-
-    const button = document.createElement("button");
-    button.className = "editButton";
-    button.innerHTML = `<div  style="display:none" class="editorParamsToolbar doorHangerRight" id="editorFreeTextParamsToolbar">
+    if (!this.isMobile) {
+      const button = document.createElement("button");
+      button.className = "editButton";
+      button.innerHTML = `<div  style="display:none" class="editorParamsToolbar doorHangerRight" id="editorFreeTextParamsToolbar">
           <div class="editorParamsToolbarContainer">
             <div class="editorParamsSetter" >
               <label for="editorFreeTextColor" class="editorParamsLabel" data-l10n-id="pdfjs-editor-free-text-color-input">颜色</label>
@@ -187,39 +185,40 @@ class FreeTextEditor extends AnnotationEditor {
             </div>
           </div>
         </div>`;
-    button
-      .querySelectorAll(".editorParamsColor")[0]
-      .addEventListener("input", event => {
-        this.updateParams(
-          AnnotationEditorParamsType.FREETEXT_COLOR,
-          event.target.value
-        );
-        console.log(event.target.value);
+      button
+        .querySelectorAll(".editorParamsColor")[0]
+        .addEventListener("input", event => {
+          this.updateParams(
+            AnnotationEditorParamsType.FREETEXT_COLOR,
+            event.target.value
+          );
+          console.log(event.target.value);
+        });
+      button.querySelectorAll(".editorParamsSlider")[0].addEventListener(
+        "input",
+        event => {
+          this.updateParams(
+            AnnotationEditorParamsType.FREETEXT_SIZE,
+            parseInt(event.target.value, 10)
+          );
+        },
+        { passive: true }
+      );
+      button.children[0].addEventListener("click", event => {
+        event.stopPropagation();
       });
-    button.querySelectorAll(".editorParamsSlider")[0].addEventListener(
-      "input",
-      event => {
-        this.updateParams(
-          AnnotationEditorParamsType.FREETEXT_SIZE,
-          parseInt(event.target.value, 10)
-        );
-      },
-      { passive: true }
-    );
-    button.children[0].addEventListener("click", event => {
-      event.stopPropagation();
-    });
-    button.addEventListener("click", event => {
-      if (this.#isShowTextEditor) {
-        button.children[0].style.display = "none";
-        this.#isShowTextEditor = false;
-      } else {
-        button.children[0].style.display = "block";
-        this.#isShowTextEditor = true;
-      }
-    });
+      button.addEventListener("click", event => {
+        if (this.#isShowTextEditor) {
+          button.children[0].style.display = "none";
+          this.#isShowTextEditor = false;
+        } else {
+          button.children[0].style.display = "block";
+          this.#isShowTextEditor = true;
+        }
+      });
 
-    toolbar.addElement(button);
+      toolbar.addElement(button);
+    }
     return toolbar;
   }
 

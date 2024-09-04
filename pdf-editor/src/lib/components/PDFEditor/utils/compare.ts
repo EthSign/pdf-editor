@@ -1,5 +1,5 @@
-import { Change, diffChars } from "diff";
-import { PDFDocument, PDFPage } from "pdf-lib";
+import { diffChars } from "diff";
+import { PDFDocument } from "pdf-lib";
 import * as pdfjs from "pdfjs-dist";
 import { withResolvers } from "./misc";
 
@@ -159,7 +159,9 @@ export async function diffPDF(oldPDF: PDFData, newPDF: PDFData) {
       ]);
 
       const textDiffs = diffChars(oldPage.text, newPage.text);
+
       const imageDiffs = diffImages(oldPage.images, newPage.images);
+      console.log(oldPage, newPage, "diff");
 
       const textConsistent =
         textDiffs.length === 1 && !textDiffs[0].added && !textDiffs[0].removed;

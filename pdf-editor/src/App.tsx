@@ -4,7 +4,6 @@ import { PDFEditor } from "./lib/components/PDFEditor/PDFEditor";
 import { usePDFEditorConnector } from "./lib/components/PDFEditor/PDFEditorConnector";
 import { AnnotationEditorType } from "./lib/components/PDFEditor/types";
 import { diffPDF } from "./lib/components/PDFEditor/utils/compare";
-import * as pdfjs from "pdfjs-dist";
 import {
   convertAnnotationsToContent,
   download,

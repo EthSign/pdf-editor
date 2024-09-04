@@ -106,6 +106,8 @@ class AnnotationEditor {
 
   isDraggable = true;
 
+  isMobile = false;
+
   static _borderLineWidth = -1;
 
   static _colorManager = new ColorManager();
@@ -199,6 +201,7 @@ class AnnotationEditor {
 
     this.isAttachedToDOM = false;
     this.deleted = false;
+    this.isMobile = parameters.isMobile;
   }
 
   get editorType() {
