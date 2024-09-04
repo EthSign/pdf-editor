@@ -1,4 +1,4 @@
-import { diffChars } from "diff";
+import { Change, diffChars } from "diff";
 import { PDFDocument } from "pdf-lib";
 import * as pdfjs from "pdfjs-dist";
 import { withResolvers } from "./misc";
@@ -16,6 +16,28 @@ type TypedArray =
 
 type PDFData = string | number[] | ArrayBuffer | TypedArray | undefined;
 
+interface ImageObject {
+  width: number;
+  height: number;
+  dataLen: number;
+  data: unknown;
+  bitmap: ImageBitmap;
+  [index: string]: unknown;
+}
+
+interface PDFImage {
+  imageName: string;
+  imageData: ImageObject;
+}
+
+interface PageDiff {
+  pageIndex: number;
+  textConsistent: boolean;
+  imageConsistent: boolean;
+  textDiffs: Change[];
+  imageDiffs: boolean;
+}
+
 export async function getDocument(
   /**
    * -
@@ -29,51 +51,10 @@ export async function getDocument(
    */
   data: string | number[] | ArrayBuffer | TypedArray | undefined,
 ) {
-  let resolveDoc!: (...args: any[]) => void;
-  const pdfBDoc = new Promise<pdfjs.PDFDocumentProxy>(
-    (resolve) => (resolveDoc = resolve),
-  );
-
-  const loadingTask = pdfjs.getDocument({
-    data,
-  });
-
-  resolveDoc(loadingTask.promise);
-
-  return pdfBDoc;
+  return pdfjs.getDocument({ data }).promise;
 }
 
-export async function extractTextContent(doc: pdfjs.PDFDocumentProxy) {
-  const pageContents: string[] = [];
-
-  const pageCount = doc.numPages;
-
-  const promises = [];
-
-  for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
-    const page = await doc.getPage(pageIndex + 1);
-
-    const promise = page.getTextContent().then((textContent) => {
-      const strBuf: string[] = [];
-
-      for (const textItem of textContent.items) {
-        const { str, hasEOL } = textItem as any;
-        strBuf.push(str);
-        if (hasEOL) {
-          // strBuf.push("\n");
-        }
-      }
-
-      pageContents[pageIndex] = strBuf.join("");
-    });
-
-    promises.push(promise);
-  }
-
-  await Promise.all(promises);
-
-  return pageContents;
-}
+/* ------------------------------- extractors ------------------------------ */
 
 export async function extractPageText(page: pdfjs.PDFPageProxy) {
   const textContent = await page.getTextContent();
@@ -94,6 +75,17 @@ export async function extractPageText(page: pdfjs.PDFPageProxy) {
   return text;
 }
 
+export async function extractTextContent(doc: pdfjs.PDFDocumentProxy) {
+  const pageCount = doc.numPages;
+
+  const pageContentsPromises = Array.from({ length: pageCount }).map(
+    (_, index) => doc.getPage(index + 1).then(extractPageText),
+  );
+  const pageContents = await Promise.all(pageContentsPromises);
+
+  return pageContents;
+}
+
 export async function extractPageImages(page: pdfjs.PDFPageProxy) {
   const { argsArray, fnArray } = await page.getOperatorList();
 
@@ -103,10 +95,10 @@ export async function extractPageImages(page: pdfjs.PDFPageProxy) {
     .map(([, args]) => {
       const objectId = args[0];
 
-      const { promise, reject, resolve } = withResolvers();
+      const { promise, reject, resolve } = withResolvers<PDFImage>();
 
       try {
-        page.objs.get(objectId, (objectData: any) => {
+        page.objs.get(objectId, (objectData: ImageObject) => {
           resolve({
             imageName: objectId,
             imageData: objectData,
@@ -137,10 +129,10 @@ export async function diffPDF(oldPDF: PDFData, newPDF: PDFData) {
 
   let consistent = true;
 
-  const pageDiffPromises: Promise<any>[] = [];
+  const pageDiffPromises: Promise<PageDiff>[] = [];
 
   for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
-    const { promise, resolve } = withResolvers();
+    const { promise, resolve } = withResolvers<PageDiff>();
 
     pageDiffPromises.push(promise);
 
@@ -158,8 +150,7 @@ export async function diffPDF(oldPDF: PDFData, newPDF: PDFData) {
         newPDFDoc.getPage(pageIndex + 1).then(extractPageContents),
       ]);
 
-      const textDiffs = diffChars(oldPage.text, newPage.text);
-
+      const textDiffs = diffTexts(oldPage.text, newPage.text);
       const imageDiffs = diffImages(oldPage.images, newPage.images);
       console.log(oldPage, newPage, "diff");
 
@@ -182,14 +173,14 @@ export async function diffPDF(oldPDF: PDFData, newPDF: PDFData) {
     })();
   }
 
-  const pageDiffs = await Promise.all(pageDiffPromises).then((pages: any) =>
-    pages.filter((page: any) => !page.textConsistent || !page.imageConsistent),
+  const diffs = await Promise.all(pageDiffPromises).then((pages) =>
+    pages.filter((page) => !page.textConsistent || !page.imageConsistent),
   );
 
-  return {
-    consistent,
-    diffs: pageDiffs,
-  };
+  oldPDFDoc.destroy();
+  newPDFDoc.destroy();
+
+  return { consistent, diffs };
 }
 
 export async function getSubject(pdf: string | ArrayBuffer | Uint8Array) {
@@ -198,17 +189,23 @@ export async function getSubject(pdf: string | ArrayBuffer | Uint8Array) {
   return pdfDoc.getSubject();
 }
 
-function diffImages(imagesA: any, imagesB: any) {
+/* ------------------------------ content diffs ----------------------------- */
+
+function diffTexts(textA: string, textB: string) {
+  return diffChars(textA, textB);
+}
+
+function diffImages(imagesA: PDFImage[], imagesB: PDFImage[]) {
   if (!imagesA.length && !imagesB.length) {
     return false;
   }
 
   if (imagesA.length !== imagesB.length) return true;
 
-  function buildImageMap(images: any) {
+  function buildImageMap(images: PDFImage[]) {
     const imageMap = new Map();
 
-    images.map((data: any) => {
+    images.map((data) => {
       const { imageName, imageData } = data;
       imageMap.set(imageName, imageData);
     });
@@ -226,7 +223,12 @@ function diffImages(imagesA: any, imagesB: any) {
     if (!imageBData) return true;
 
     const compareKeys = ["width", "height", "dataLen"];
+    const hasDiff = compareKeys.some(
+      (key) => imageAData[key] !== imageBData[key],
+    );
 
-    return compareKeys.some((key) => imageAData[key] !== imageBData[key]);
+    if (hasDiff) return true;
   }
+
+  return false;
 }
