@@ -13,7 +13,7 @@
 
 /* widgets variables */
 :root {
-  --widget-search-height: 80px;
+  --widget-search-height: 76px;
 }
 
 .toolbar {
@@ -58,7 +58,7 @@
 }
 
 #thumbnailView {
-  inset-block-start: var(--widget-search-height);
+  inset-block-start: calc(var(--widget-search-height) + 24px);
 }
 
 #thumbnailView .thumbnail {
@@ -287,14 +287,21 @@
 
 .widget-search-result {
   flex: 1;
-  padding: 16px 35px;
+  padding: 16px 24px;
+  padding-top: 8px;
   background-color: white;
   overflow: auto;
 }
 
 .widget-search-result-bar {
   display: flex;
+  height: 28px;
+  margin-bottom: 16px;
+  align-items: center;
   justify-content: space-between;
+
+  font-size: 13px;
+  color: #868e96;
 }
 
 .widget-search-result-bar-icons {
@@ -304,7 +311,8 @@
 .widget-search {
   display: flex;
   justify-content: center;
-  align-items: center;
+  padding-top: 32px;
+  box-sizing: border-box;
   height: var(--widget-search-height);
 }
 

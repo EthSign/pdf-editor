@@ -169,15 +169,17 @@ export const Search: React.FC = () => {
             }}
           />
           <div className="widget-search-input-clear-button">
-            <IconClose
-              fill="#667085"
-              width={20}
-              height={20}
-              onClick={() => {
-                setSearchText("");
-                find("");
-              }}
-            />
+            {searchText.length > 0 && (
+              <IconClose
+                fill="#667085"
+                width={20}
+                height={20}
+                onClick={() => {
+                  setSearchText("");
+                  find("");
+                }}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -187,7 +189,9 @@ export const Search: React.FC = () => {
           {/* {searching && <div className="">loading...</div>} */}
 
           <div className="widget-search-result-bar">
-            <span>{total} result found</span>
+            <span>
+              {total} result{total > 0 ? "s" : ""} found
+            </span>
 
             <div className="widget-search-result-bar-icons">
               <IconLeft
