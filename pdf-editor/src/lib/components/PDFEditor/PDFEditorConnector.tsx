@@ -126,14 +126,25 @@ export class PDFEditorConnector {
     const blob = new Blob([currentPDFData], { type: "application/pdf" });
 
     const newDoc = await PDFDocument.load(await blob.arrayBuffer());
-    newDoc.addPage();
+
+    try {
+      const firstPage = newDoc.getPage(0);
+      const { width, height } = firstPage.getSize();
+      newDoc.addPage([width, height]);
+    } catch (error) {
+      console.error(
+        new Error("Add empty page with original failed", { cause: error }),
+      );
+      newDoc.addPage();
+    }
+
     const newDocBytes = await newDoc.save();
 
     const newBlob = new Blob([newDocBytes], { type: "application/pdf" });
     const url = URL.createObjectURL(newBlob);
     await this.open(url);
+
     return newDocBytes;
-    // TODO: jump to last page
   }
 
   open(url: string) {
