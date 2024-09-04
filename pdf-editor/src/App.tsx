@@ -4,6 +4,7 @@ import { PDFEditor } from "./lib/components/PDFEditor/PDFEditor";
 import { usePDFEditorConnector } from "./lib/components/PDFEditor/PDFEditorConnector";
 import { AnnotationEditorType } from "./lib/components/PDFEditor/types";
 import { diffPDF } from "./lib/components/PDFEditor/utils/compare";
+import * as pdfjs from "pdfjs-dist";
 import {
   convertAnnotationsToContent,
   download,
@@ -266,20 +267,48 @@ function App() {
 
             <button
               onClick={async () => {
-                const uploadedPDFTextContent = uploadPDFFile();
-
-                const currentPDFTextContent = connector
-                  .getPdfData()
-                  .then((data) => data as ArrayBuffer);
-
-                const [pdfA, pdfB] = await Promise.all([
-                  currentPDFTextContent,
-                  uploadedPDFTextContent,
-                ]);
+                const [pdfA, pdfB] = await uploadPDFFile();
 
                 const diffs = await diffPDF(pdfA, pdfB);
 
-                console.log({ diffs });
+                console.log(diffs);
+                // const uploadedPDFTextContent = uploadPDFFile();
+
+                // const currentPDFTextContent = connector
+                //   .getPdfData()
+                //   .then((data) => data as ArrayBuffer);
+
+                // const [pdfA, pdfB] = await Promise.all([
+                //   currentPDFTextContent,
+                //   uploadedPDFTextContent,
+                // ]);
+
+                // const diffs = await diffPDF(pdfA, pdfB, {
+                //   pdfWorkerSrc: "../node_modules/pdfjs-dist/build/pdf.worker.mjs",
+                // });
+
+                // console.log({ diffs });
+
+                // const doc = connector.app.pdfDocument as pdfjs.PDFDocumentProxy;
+
+                // for (let pageIndex = 0; pageIndex < doc.numPages; pageIndex++) {
+                //   const page = await doc.getPage(pageIndex + 1);
+
+                //   const operators = await page.getOperatorList();
+
+                //   for (let i = 0; i < operators.fnArray.length; i++) {
+                //     const fn = operators.fnArray[i];
+                //     const args = operators.argsArray[i];
+
+                //     if (fn === pdfjs.OPS.paintImageXObject) {
+                //       const objId = args[0];
+
+                //       const { data } = page.objs.get(objId);
+
+                //       console.log(data instanceof Uint8ClampedArray);
+                //     }
+                //   }
+                // }
               }}
             >
               文件对比
