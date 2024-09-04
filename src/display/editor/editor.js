@@ -1406,9 +1406,9 @@ class AnnotationEditor {
   static deserialize(data, parent, uiManager) {
     const editor = new this.prototype.constructor({
       parent,
-      id: data.editorId || parent.getNextId(),
-      uiManager,
       ...data,
+      id: data.id || data.editorId || parent.getNextId(),
+      uiManager,
     });
     editor.rotation = data.rotation;
     editor.#accessibilityData = data.accessibilityData;

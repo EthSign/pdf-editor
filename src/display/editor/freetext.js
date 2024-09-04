@@ -141,6 +141,15 @@ class FreeTextEditor extends AnnotationEditor {
     this.#fontSize = params.fontSize || FreeTextEditor._defaultFontSize;
   }
 
+  get content() {
+    return this.#content;
+  }
+
+  set content(value) {
+    this.#content = value;
+    this.editorDiv.innerText = value;
+  }
+
   /** @inheritdoc */
   static initialize(l10n, uiManager) {
     AnnotationEditor.initialize(l10n, uiManager, {

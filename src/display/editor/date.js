@@ -145,6 +145,15 @@ class DateEditor extends AnnotationEditor {
     this.#content = params.content || new Date().toLocaleDateString();
   }
 
+  get content() {
+    return this.#content;
+  }
+
+  set content(value) {
+    this.#content = value;
+    this.editorDiv.innerText = value;
+  }
+
   /** @inheritdoc */
   static initialize(l10n, uiManager) {
     AnnotationEditor.initialize(l10n, uiManager, {
