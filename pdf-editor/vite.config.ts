@@ -21,14 +21,19 @@ export default defineConfig({
       rollupTypes: true,
       insertTypesEntry: true,
     }),
-    viteStaticCopy({
-      targets: [
-        {
-          src: "../build/generic/*",
-          dest: "../public/pdf-viewer",
-        },
-      ],
-    }),
+    viteStaticCopy(
+      {
+        targets: [
+          {
+            src: "../build/generic/*",
+            dest: "pdf-viewer",
+          },
+          {
+            src: "../build/generic-legacy/*",
+            dest: "pdf-viewer-legacy",
+          },
+        ]
+      }),
   ],
   build: {
     lib: {

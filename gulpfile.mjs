@@ -2455,7 +2455,11 @@ gulp.task(
 
 gulp.task(
   "build:pdf-editor",
-  gulp.series("generic", done => {
+  gulp.series(gulp.parallel("generic", "generic-legacy"), async done => {
+    const result = fs.readdirSync(path.join(__dirname, "build"));
+
+    console.log(result);
+
     exec("cd pdf-editor && pnpm run build", (err, stdout, stderr) => {
       if (err) {
         console.error(stderr);
