@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 
 public/pdf-viewer
+public/pdf-viewer-legacy

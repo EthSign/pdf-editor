@@ -1,20 +1,10 @@
 import { Change, diffChars } from "diff";
 import { PDFDocument } from "pdf-lib";
 import * as pdfjs from "pdfjs-dist";
+import type { DocumentInitParameters } from "pdfjs-dist/types/src/display/api";
 import { withResolvers } from "./misc";
 
-type TypedArray =
-  | Int8Array
-  | Uint8Array
-  | Uint8ClampedArray
-  | Int16Array
-  | Uint16Array
-  | Int32Array
-  | Uint32Array
-  | Float32Array
-  | Float64Array;
-
-type PDFData = string | number[] | ArrayBuffer | TypedArray | undefined;
+type PDFData = DocumentInitParameters["data"];
 
 interface ImageObject {
   width: number;
@@ -38,19 +28,7 @@ interface PageDiff {
   imageDiffs: boolean;
 }
 
-export async function getDocument(
-  /**
-   * -
-   * Binary PDF data.
-   * Use TypedArrays (Uint8Array) to improve the memory usage. If PDF data is
-   * BASE64-encoded, use `atob()` to convert it to a binary string first.
-   *
-   * NOTE: If TypedArrays are used they will generally be transferred to the
-   * worker-thread. This will help reduce main-thread memory usage, however
-   * it will take ownership of the TypedArrays.
-   */
-  data: string | number[] | ArrayBuffer | TypedArray | undefined,
-) {
+export async function getDocument(data: PDFData) {
   return pdfjs.getDocument({ data }).promise;
 }
 
