@@ -467,7 +467,7 @@ class MLManager {
     (this.#enabled ||= new Map()).set("altText", promise);
     if (listenToProgress) {
       const ac = new AbortController();
-      const signal = AbortSignal.any([this.#abortSignal, ac.signal]);
+      const signal = AbortSignal?.any([this.#abortSignal, ac.signal]);
 
       this.hasProgress = true;
       window.addEventListener(

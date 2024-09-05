@@ -853,7 +853,7 @@ class AnnotationEditorUIManager {
   }
 
   combinedSignal(ac) {
-    return AbortSignal.any([this._signal, ac.signal]);
+    return AbortSignal?.any([this._signal, ac.signal]);
   }
 
   get annotationTempData() {
