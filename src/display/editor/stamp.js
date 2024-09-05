@@ -616,9 +616,10 @@ class StampEditor extends AnnotationEditor {
     }
     canvas.width = width;
     canvas.height = height;
-    const bitmap = this.#isSvg
-      ? this.#bitmap
-      : this.#scaleBitmap(width, height);
+    // const bitmap = this.#isSvg
+    //   ? this.#bitmap
+    //   : this.#scaleBitmap(width, height);
+    const bitmap = this.#bitmap;
 
     const ctx = canvas.getContext("2d");
     ctx.filter = this._uiManager.hcmFilter;

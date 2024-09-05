@@ -102,6 +102,7 @@ const BABEL_PRESET_ENV_OPTS = Object.freeze({
   exclude: ["web.structured-clone"],
   shippedProposals: true,
   useBuiltIns: "usage",
+  targets: "defaults",
 });
 
 const DEFINES = Object.freeze({

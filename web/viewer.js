@@ -30,6 +30,23 @@ const AppConstants =
     ? { LinkTarget, RenderingStates, ScrollMode, SpreadMode }
     : null;
 
+if (!window.OffscreenCanvas) {
+  window.OffscreenCanvas = class OffscreenCanvas {
+    constructor(width, height) {
+      this.canvas = document.createElement("canvas");
+      this.canvas.width = width;
+      this.canvas.height = height;
+
+      this.canvas.convertToBlob = () =>
+        new Promise(resolve => {
+          this.canvas.toBlob(resolve);
+        });
+      this.canvas.transferToImageBitmap = () => this.canvas;
+      return this.canvas;
+    }
+  };
+}
+
 window.PDFViewerApplication = PDFViewerApplication;
 window.PDFViewerApplicationConstants = AppConstants;
 window.PDFViewerApplicationOptions = AppOptions;
