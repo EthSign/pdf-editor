@@ -17,7 +17,16 @@ import { RenderingStates, ScrollMode, SpreadMode } from "./ui_utils.js";
 import { AppOptions } from "./app_options.js";
 import { LinkTarget } from "./pdf_link_service.js";
 import { PDFViewerApplication } from "./app.js";
-
+if (!Promise.withResolvers) {
+  Promise.withResolvers = function () {
+    let resolve, reject;
+    const promise = new Promise((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    return { promise, resolve, reject };
+  };
+}
 /* eslint-disable-next-line no-unused-vars */
 const pdfjsVersion =
   typeof PDFJSDev !== "undefined" ? PDFJSDev.eval("BUNDLE_VERSION") : void 0;
