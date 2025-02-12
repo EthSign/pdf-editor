@@ -947,8 +947,11 @@ class AnnotationEditor {
     const point = getPoint(savedWidth, savedHeight);
     const oppositePoint = getOpposite(savedWidth, savedHeight);
     let transfOppositePoint = transf(...oppositePoint);
+
     const oppositeX = round(savedX + transfOppositePoint[0]);
     const oppositeY = round(savedY + transfOppositePoint[1]);
+    console.log(oppositeX, oppositeY, "2222");
+
     let ratioX = 1;
     let ratioY = 1;
 
@@ -987,7 +990,65 @@ class AnnotationEditor {
           Math.min(1, Math.abs(oppositePoint[1] - point[1] - deltaY))
         ) / savedHeight;
     }
-
+    switch (name) {
+      case "topLeft":
+        // Ensure the width and height don't exceed the parent bounds
+        if ((savedX <= 0 || savedY <= 0) && (ratioX > 1 || ratioY > 1)) {
+          ratioX = ratioY = 1;
+        }
+        break;
+      case "topMiddle":
+        if (savedY <= 0 && (ratioX > 1 || ratioY > 1)) {
+          ratioX = ratioY = 1;
+        }
+        break;
+      case "topRight":
+        if (
+          (round(savedWidth * ratioX) > 1 - savedX || savedY <= 0) &&
+          (ratioX > 1 || ratioY > 1)
+        ) {
+          ratioX = ratioY = 1;
+        }
+        break;
+      case "middleRight":
+        if (round(savedWidth * ratioX) > 1 - savedX) {
+          ratioX = 1;
+        }
+        break;
+      case "bottomRight":
+        if (
+          round(savedWidth * ratioX) > 1 - savedX ||
+          round(savedHeight * ratioY) > 1 - savedY
+        ) {
+          ratioX = ratioY = 1; // Maintain original size or maximum size within bounds
+        }
+        break;
+      case "bottomMiddle":
+        // Ensure the width doesn't exceed the parent bounds
+        if (round(savedWidth * ratioX) > 1 - savedX) {
+          ratioX = 1;
+        }
+        // Ensure the height doesn't exceed the parent bounds
+        if (round(savedHeight * ratioY) > 1 - savedY) {
+          ratioY = 1;
+        }
+        break;
+      case "bottomLeft":
+        // Ensure the width and height don't exceed the parent bounds
+        if (
+          (savedX <= 0 || round(savedHeight * ratioY) > 1 - savedY) &&
+          (ratioX > 1 || ratioY > 1)
+        ) {
+          ratioX = ratioY = 1;
+        }
+        break;
+      case "middleLeft":
+        // Ensure the width doesn't exceed the parent bounds
+        if (savedX <= 0 && ratioX > 1) {
+          ratioX = 1;
+        }
+        break;
+    }
     const newWidth = round(savedWidth * ratioX);
 
     const newHeight = round(savedHeight * ratioY);

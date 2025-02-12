@@ -2038,6 +2038,9 @@ gulp.task(
         gulp.series("dev-sandbox")
       );
     },
+    function watchSrc() {
+      gulp.watch("src/**/*", gulp.series("build:pdf-editor"));
+    },
     async function createServer() {
       console.log();
       console.log("### Starting local server");

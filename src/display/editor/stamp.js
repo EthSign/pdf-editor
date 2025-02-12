@@ -52,7 +52,7 @@ class StampEditor extends AnnotationEditor {
     super({ ...params, name: "stampEditor" });
     this.#bitmapUrl = params.bitmapUrl;
     this.#bitmapFile = params.bitmapFile;
-    this._willKeepAspectRatio = true;
+    this._willKeepAspectRatio = !true;
     this.isResizable = this.isResizable === null ? true : this.isResizable;
   }
 
