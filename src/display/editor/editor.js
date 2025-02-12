@@ -950,7 +950,6 @@ class AnnotationEditor {
 
     const oppositeX = round(savedX + transfOppositePoint[0]);
     const oppositeY = round(savedY + transfOppositePoint[1]);
-    console.log(oppositeX, oppositeY, "2222");
 
     let ratioX = 1;
     let ratioY = 1;
