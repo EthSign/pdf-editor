@@ -71,7 +71,7 @@ class IdManager {
    * @returns {string}
    */
   get id() {
-    return `${AnnotationEditorPrefix}${this.#id++}`;
+    return `${AnnotationEditorPrefix}${Math.random().toString(36).substring(2, 12)}`;
   }
 }
 
