@@ -935,9 +935,9 @@ class FreeTextEditor extends AnnotationEditor {
 
   /** @inheritdoc */
   serialize(isForCopying = false, isForStorage = false) {
-    if (this.isEmpty()) {
-      return null;
-    }
+    // if (this.isEmpty()) {
+    //   return null;
+    // }
 
     if (this.deleted) {
       return {

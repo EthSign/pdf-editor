@@ -202,6 +202,7 @@ class AnnotationEditor {
     this.isAttachedToDOM = false;
     this.deleted = false;
     this.isMobile = parameters.isMobile;
+    this._isVisible = parameters.isVisible !== false;
   }
 
   get editorType() {

@@ -177,9 +177,7 @@
   left: 0;
   right: 0;
 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+
 
   height: 50px;
   border-bottom: 1px solid #eaecf0;
@@ -188,6 +186,12 @@
   color: #1d2939;
   font-weight: 400;
   background: white;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: 0 24px;
+  line-height: 50px;
 }
 
 #outerContainer.sidebarOpen .widget-title-wrapper {
